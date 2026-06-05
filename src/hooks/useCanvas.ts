@@ -13,7 +13,7 @@ interface UseCanvasOptions {
   onZoomChange?: (zoom: number) => void
 }
 
-export function useCanvas({ canvasId, onMouseMove, onZoomChange }: UseCanvasOptions) {
+export function useCanvas({ canvasId, onMouseMove: onCursorMove, onZoomChange }: UseCanvasOptions) {
   const canvasRef = useRef<fabric.Canvas | null>(null)
   const isPanning  = useRef(false)
   const lastPos    = useRef({ x: 0, y: 0 })
@@ -127,7 +127,7 @@ export function useCanvas({ canvasId, onMouseMove, onZoomChange }: UseCanvasOpti
     if (!canvas) return
 
     // ── MOUSE DOWN ────────────────────────────────
-    const onMouseDown = (e: fabric.IEvent<MouseEvent>) => {
+    const onMouseDown = (e: any) => {
       const pointer = canvas.getPointer(e.e)
       const zoom    = canvas.getZoom()
 
@@ -202,14 +202,14 @@ export function useCanvas({ canvasId, onMouseMove, onZoomChange }: UseCanvasOpti
     }
 
     // ── MOUSE MOVE ────────────────────────────────
-    const onMouseMove = (e: fabric.IEvent<MouseEvent>) => {
+    const onMouseMove = (e: any) => {
       const pointer = canvas.getPointer(e.e)
       const zoom    = canvas.getZoom()
       const xMm     = pxToMm(pointer.x, zoom)
       const yMm     = pxToMm(pointer.y, zoom)
 
       // Update cursor coordinates in parent
-      onMouseMove?.(
+      onCursorMove?.(
         Math.round(pointer.x),
         Math.round(pointer.y),
         xMm,
@@ -264,7 +264,7 @@ export function useCanvas({ canvasId, onMouseMove, onZoomChange }: UseCanvasOpti
     }
 
     // ── MOUSE UP ──────────────────────────────────
-    const onMouseUp = (e: fabric.IEvent<MouseEvent>) => {
+    const onMouseUp = (e: any) => {
       // Stop panning
       if (isPanning.current) {
         isPanning.current = false
@@ -301,7 +301,7 @@ export function useCanvas({ canvasId, onMouseMove, onZoomChange }: UseCanvasOpti
     }
 
     // ── MOUSE WHEEL (zoom) ────────────────────────
-    const onWheel = (e: fabric.IEvent<WheelEvent>) => {
+    const onWheel = (e: any) => {
       e.e.preventDefault()
       const delta = e.e.deltaY
       let zoom = canvas.getZoom()

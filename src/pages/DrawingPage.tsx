@@ -139,7 +139,7 @@ export default function DrawingPage() {
         <div className="w-px h-5 bg-panel-border" />
 
         {syncState.status === 'success' && (
-          <CheckCircle size={12} className="text-accent-success" title="Hub synced" />
+          <CheckCircle size={12} className="text-accent-success" aria-label="Hub synced" />
         )}
         {syncState.status === 'error' && (
           <button onClick={retry} className="toolbar-btn w-8 h-8">
