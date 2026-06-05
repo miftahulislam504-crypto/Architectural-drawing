@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Bengali:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Variables ─────────────────────────────── */
+:root {
+  --canvas-bg: #0D0F12;
+  --canvas-grid-major: #1F2328;
+  --canvas-grid-minor: #161920;
+  --panel-bg: #12151A;
+  --panel-border: #2A2D35;
+  --accent: #00B4D8;
+  --accent-dim: rgba(0, 180, 216, 0.15);
+  --text-primary: #E8EAF0;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
+
+  /* Scrollbar */
+  --scrollbar-track: #12151A;
+  --scrollbar-thumb: #2A2D35;
+  --scrollbar-thumb-hover: #3A3D45;
+}
+
+/* ─── Base Reset ─────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--canvas-bg);
+  color: var(--text-primary);
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Scrollbar ──────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+
+/* ─── Selection ──────────────────────────────────── */
+::selection {
+  background: rgba(0, 180, 216, 0.25);
+  color: #E8EAF0;
+}
+
+/* ─── Fabric Canvas ──────────────────────────────── */
+.canvas-container {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+}
+
+.upper-canvas {
+  cursor: crosshair !important;
+}
+
+/* ─── Panel Base ─────────────────────────────────── */
+.panel {
+  background: var(--panel-bg);
+  border-right: 1px solid var(--panel-border);
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.panel-right {
+  border-right: none;
+  border-left: 1px solid var(--panel-border);
+}
+
+/* ─── Toolbar ────────────────────────────────────── */
+.toolbar-btn {
+  @apply flex items-center justify-center w-10 h-10 rounded-lg
+         text-text-secondary hover:text-text-primary
+         hover:bg-panel-hover transition-all duration-150
+         cursor-pointer select-none;
+}
+
+.toolbar-btn.active {
+  @apply text-accent-primary bg-panel-active;
+  box-shadow: 0 0 0 1px rgba(0, 180, 216, 0.4);
+}
+
+.toolbar-btn:active {
+  transform: scale(0.94);
+}
+
+/* ─── Input Fields ───────────────────────────────── */
+.cad-input {
+  @apply w-full bg-canvas-bg border border-panel-border rounded
+         text-text-primary text-xs font-mono px-2 py-1.5
+         focus:outline-none focus:border-accent-primary
+         transition-colors duration-150;
+}
+
+/* ─── Section Label ──────────────────────────────── */
+.section-label {
+  @apply text-2xs font-display font-semibold tracking-widest
+         uppercase text-text-muted px-3 py-2;
+}
+
+/* ─── Divider ────────────────────────────────────── */
+.divider {
+  @apply border-t border-panel-border my-1;
+}
+
+/* ─── Badge ──────────────────────────────────────── */
+.badge {
+  @apply text-2xs font-mono px-1.5 py-0.5 rounded
+         bg-panel-active text-text-secondary;
+}
+
+/* ─── Tooltip ────────────────────────────────────── */
+.tooltip {
+  @apply absolute z-50 text-xs bg-canvas-grid text-text-primary
+         px-2 py-1 rounded pointer-events-none whitespace-nowrap;
+  box-shadow: var(--shadow-tooltip, 0 2px 8px rgba(0,0,0,0.6));
+}
+
+/* ─── Status Bar ─────────────────────────────────── */
+.status-bar {
+  @apply flex items-center gap-4 text-2xs font-mono text-text-muted
+         bg-panel-bg border-t border-panel-border px-4;
+  height: 24px;
+}
+
+/* ─── Loading Spinner ────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--panel-border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+/* ─── Accent Glow ────────────────────────────────── */
+.accent-glow {
+  box-shadow: 0 0 12px rgba(0, 180, 216, 0.3);
+}
+
+/* ─── Transitions ────────────────────────────────── */
+.transition-panel {
+  transition: width 0.2s ease, opacity 0.2s ease;
+}
