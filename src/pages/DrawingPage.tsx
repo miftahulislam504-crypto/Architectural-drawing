@@ -1,116 +1,225 @@
-import { useEffect } from 'react'
+import { useRef, useState, useCallback, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAppStore } from '@/store/useAppStore'
-import { Cpu, ArrowLeft, Layers, Grid3x3 } from 'lucide-react'
+import { useProjectSync } from '@/hooks/useProjectSync'
+import { saveDrawing, loadDrawing, autoSaveLocal, extractBIMSummary } from '@/lib/canvasStorage'
+import { markDrawingComplete } from '@/lib/hubSync'
 
-// Phase 1-এ এখানে Canvas, Toolbar, Panels আসবে
-// Phase 0-এ শুধু placeholder দেখাচ্ছি
+import Toolbar          from '@/components/toolbar/Toolbar'
+import LayerPanel       from '@/components/panels/LayerPanel'
+import PropertiesPanel  from '@/components/panels/PropertiesPanel'
+import FloorManager     from '@/components/panels/FloorManager'
+import ProjectInfoPanel from '@/components/panels/ProjectInfoPanel'
+import DrawingCanvas    from '@/components/canvas/DrawingCanvas'
+import LoadingOverlay   from '@/components/ui/LoadingOverlay'
+import ToastContainer, { toast } from '@/components/ui/Toast'
+
+import {
+  ArrowLeft, PanelLeftOpen, PanelRightOpen,
+  Save, Download, Cpu, Info,
+  Layers, LayoutList, RefreshCw, CheckCircle
+} from 'lucide-react'
+
+type LeftTab = 'layers' | 'floors' | 'info'
 
 export default function DrawingPage() {
   const { projectId } = useParams<{ projectId: string }>()
-  const navigate = useNavigate()
-  const { hubProject, floors, activeFloorId, setActiveFloor } = useAppStore()
+  const navigate      = useNavigate()
 
+  const {
+    hubProject,
+    floors, activeFloorId, setActiveFloor,
+    leftPanelOpen,  toggleLeftPanel,
+    rightPanelOpen, toggleRightPanel,
+  } = useAppStore()
+
+  const { syncState, retry } = useProjectSync(projectId)
+  const showOverlay = syncState.status === 'loading' || syncState.status === 'error'
+
+  const [leftTab, setLeftTab] = useState<LeftTab>('layers')
+  const canvasRef = useRef<any>(null)
+
+  // Auto-save every 2 min
   useEffect(() => {
-    if (!hubProject && projectId) {
-      // Project not loaded — redirect to select
-      navigate('/projects')
-    }
-  }, [hubProject, projectId, navigate])
+    if (!projectId || !activeFloorId) return
+    const interval = setInterval(() => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      autoSaveLocal(projectId, activeFloorId, canvas)
+    }, 120_000)
+    return () => clearInterval(interval)
+  }, [projectId, activeFloorId])
 
-  if (!hubProject) return null
+  // Load drawing when floor changes
+  useEffect(() => {
+    if (!projectId || !activeFloorId || syncState.status !== 'success') return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    loadDrawing(projectId, activeFloorId, canvas)
+      .then((found) => {
+        if (!found) {
+          const objects = canvas.getObjects().filter((o: any) => !o.__isGrid)
+          objects.forEach((o: any) => canvas.remove(o))
+          canvas.renderAll()
+        }
+      })
+      .catch(() => {})
+  }, [activeFloorId, projectId, syncState.status])
+
+  const handleSave = useCallback(async () => {
+    const canvas = canvasRef.current
+    if (!canvas || !projectId || !activeFloorId) return
+    try {
+      await saveDrawing(projectId, activeFloorId, canvas)
+      autoSaveLocal(projectId, activeFloorId, canvas)
+      const summary = extractBIMSummary(canvas)
+      await markDrawingComplete(projectId, {
+        wallCount:   summary.wallCount,
+        doorCount:   summary.doorCount,
+        windowCount: summary.windowCount,
+        columnCount: summary.columnCount,
+        floorCount:  floors.length,
+      })
+      toast.success(`"${activeFloorId}" floor সেভ হয়েছে`)
+    } catch {
+      toast.error('Save করতে সমস্যা হয়েছে')
+    }
+  }, [projectId, activeFloorId, floors.length])
+
+  const handleFloorSwitch = useCallback(async (floorId: string) => {
+    const canvas = canvasRef.current
+    if (canvas && projectId && activeFloorId) {
+      autoSaveLocal(projectId, activeFloorId, canvas)
+      try { await saveDrawing(projectId, activeFloorId, canvas) } catch {}
+    }
+    setActiveFloor(floorId)
+  }, [projectId, activeFloorId, setActiveFloor])
 
   const activeFloor = floors.find((f) => f.id === activeFloorId)
 
   return (
     <div className="w-screen h-screen bg-canvas-bg flex flex-col overflow-hidden">
 
-      {/* Top Header */}
-      <div className="bg-panel-bg border-b border-panel-border flex items-center gap-3 px-3"
+      {/* Header */}
+      <header className="bg-panel-bg border-b border-panel-border flex items-center gap-2 px-2 shrink-0 z-20"
         style={{ height: '44px' }}>
 
-        <button
-          onClick={() => navigate('/projects')}
-          className="toolbar-btn w-8 h-8"
-        >
-          <ArrowLeft size={16} />
+        <button onClick={() => navigate('/projects')} className="toolbar-btn w-8 h-8">
+          <ArrowLeft size={15} />
         </button>
-
         <div className="w-px h-5 bg-panel-border" />
+        <Cpu size={15} className="text-accent-primary shrink-0" />
 
-        <Cpu size={16} className="text-accent-primary shrink-0" />
-        <div className="flex-1 min-w-0">
-          <p className="text-text-primary text-xs font-display font-semibold truncate leading-tight">
-            {hubProject.name}
+        <div className="min-w-0 flex-1">
+          <p className="text-text-primary text-xs font-display font-semibold leading-tight truncate">
+            {hubProject?.name ?? 'CivilOS Architectural'}
           </p>
           <p className="text-text-muted text-2xs font-mono leading-tight">
             {activeFloor?.name ?? '—'}
+            {activeFloor && ` · +${(activeFloor.level / 1000).toFixed(1)}m`}
           </p>
         </div>
 
-        {/* Floor tabs */}
-        <div className="flex items-center gap-1 overflow-x-auto">
-          {floors.map((floor) => (
-            <button
-              key={floor.id}
-              onClick={() => setActiveFloor(floor.id)}
-              className={`px-2.5 py-1 rounded text-2xs font-mono whitespace-nowrap transition-all
+        {/* Floor quick-tabs */}
+        <div className="hidden sm:flex items-center gap-1 overflow-x-auto max-w-xs">
+          {floors.slice(0, 5).map((floor) => (
+            <button key={floor.id} onClick={() => handleFloorSwitch(floor.id)}
+              className={`px-2 py-1 rounded text-2xs font-mono whitespace-nowrap transition-all border shrink-0
                 ${floor.id === activeFloorId
-                  ? 'bg-panel-active text-accent-primary border border-accent-primary/30'
-                  : 'text-text-muted hover:text-text-secondary hover:bg-panel-hover'
-                }`}
-            >
+                  ? 'bg-panel-active text-accent-primary border-accent-primary/30'
+                  : 'text-text-muted border-transparent hover:bg-panel-hover hover:text-text-secondary'}`}>
               {floor.name}
             </button>
           ))}
+          {floors.length > 5 && (
+            <span className="text-2xs text-text-muted font-mono px-1">+{floors.length - 5}</span>
+          )}
         </div>
+
+        <div className="w-px h-5 bg-panel-border" />
+
+        {syncState.status === 'success' && (
+          <CheckCircle size={12} className="text-accent-success" title="Hub synced" />
+        )}
+        {syncState.status === 'error' && (
+          <button onClick={retry} className="toolbar-btn w-8 h-8">
+            <RefreshCw size={13} className="text-accent-error" />
+          </button>
+        )}
+
+        <button onClick={handleSave} className="toolbar-btn w-8 h-8" title="Save (Ctrl+S)">
+          <Save size={14} />
+        </button>
+        <button className="toolbar-btn w-8 h-8 opacity-40 cursor-not-allowed" disabled title="Phase 10-এ আসবে">
+          <Download size={14} />
+        </button>
+        <div className="w-px h-5 bg-panel-border" />
+        <button onClick={toggleLeftPanel}
+          className={`toolbar-btn w-8 h-8 ${leftPanelOpen ? 'text-accent-primary' : ''}`}>
+          <PanelLeftOpen size={14} />
+        </button>
+        <button onClick={toggleRightPanel}
+          className={`toolbar-btn w-8 h-8 ${rightPanelOpen ? 'text-accent-primary' : ''}`}>
+          <PanelRightOpen size={14} />
+        </button>
+      </header>
+
+      {/* Main */}
+      <div className="flex flex-1 overflow-hidden relative">
+
+        {showOverlay && <LoadingOverlay syncState={syncState} onRetry={retry} />}
+
+        <Toolbar />
+
+        {leftPanelOpen && (
+          <div className="flex flex-col bg-panel-bg border-r border-panel-border animate-fade-in shrink-0"
+            style={{ width: '200px' }}>
+            {/* Tabs */}
+            <div className="flex border-b border-panel-border shrink-0" style={{ height: '32px' }}>
+              <TabBtn active={leftTab === 'layers'} onClick={() => setLeftTab('layers')} title="Layers">
+                <Layers size={12} />
+              </TabBtn>
+              <TabBtn active={leftTab === 'floors'} onClick={() => setLeftTab('floors')} title="Floors">
+                <LayoutList size={12} />
+              </TabBtn>
+              <TabBtn active={leftTab === 'info'} onClick={() => setLeftTab('info')} title="Project Info">
+                <Info size={12} />
+              </TabBtn>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              {leftTab === 'layers' && <LayerPanel />}
+              {leftTab === 'floors' && <FloorManager />}
+              {leftTab === 'info'   && <ProjectInfoPanel />}
+            </div>
+          </div>
+        )}
+
+        <div className="flex-1 overflow-hidden relative">
+          <DrawingCanvas projectId={projectId ?? ''} canvasRef={canvasRef} onSave={handleSave} />
+        </div>
+
+        {rightPanelOpen && (
+          <div className="animate-fade-in shrink-0">
+            <PropertiesPanel />
+          </div>
+        )}
       </div>
 
-      {/* Canvas Area Placeholder */}
-      <div className="flex-1 relative flex items-center justify-center"
-        style={{
-          background: '#0D0F12',
-          backgroundImage: `
-            linear-gradient(rgba(0,180,216,0.04) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,180,216,0.04) 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px',
-        }}
-      >
-        {/* Center info — Phase 1-এ Canvas হবে এখানে */}
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-3 mb-4 text-text-muted">
-            <Grid3x3 size={32} className="text-accent-primary/30" />
-            <Layers size={32} className="text-accent-primary/30" />
-          </div>
-          <p className="text-text-secondary text-sm font-display mb-1">
-            Canvas Loading...
-          </p>
-          <p className="text-text-muted text-xs font-bengali">
-            Phase 1-এ Fabric.js Canvas এখানে আসবে
-          </p>
-          <div className="mt-4 px-4 py-2 bg-panel-bg border border-panel-border rounded-lg inline-block">
-            <p className="text-2xs font-mono text-accent-primary">
-              Project: {hubProject.id}
-            </p>
-            <p className="text-2xs font-mono text-text-muted">
-              Floor: {activeFloor?.name} | Level: {activeFloor?.level}mm
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Status Bar */}
-      <div className="status-bar">
-        <span>X: 0</span>
-        <span>Y: 0</span>
-        <span className="w-px h-3 bg-panel-border" />
-        <span>Zoom: 100%</span>
-        <span className="w-px h-3 bg-panel-border" />
-        <span className="text-accent-primary">SELECT</span>
-        <span className="w-px h-3 bg-panel-border" />
-        <span>{hubProject.name}</span>
-      </div>
+      <ToastContainer />
     </div>
+  )
+}
+
+function TabBtn({ children, active, onClick, title }: {
+  children: React.ReactNode; active: boolean; onClick: () => void; title: string
+}) {
+  return (
+    <button onClick={onClick} title={title}
+      className={`flex-1 flex items-center justify-center text-xs transition-colors border-b-2
+        ${active
+          ? 'text-accent-primary border-accent-primary bg-panel-active'
+          : 'text-text-muted border-transparent hover:text-text-secondary hover:bg-panel-hover'}`}>
+      {children}
+    </button>
   )
 }
