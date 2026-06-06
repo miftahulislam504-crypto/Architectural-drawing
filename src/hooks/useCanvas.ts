@@ -342,7 +342,7 @@ export function useCanvas({ canvasId, onMouseMove: onCursorMove, onZoomChange }:
       canvas.off('mouse:wheel', onWheel as any)
     }
   }, [activeTool, getSnappedPoint, activeLayerId, gridSize, showGrid,
-      setViewport, onMouseMove, onZoomChange])
+      setViewport, onCursorMove, onZoomChange])
 
   // ── Cursor style per tool ──────────────────────────
   useEffect(() => {
