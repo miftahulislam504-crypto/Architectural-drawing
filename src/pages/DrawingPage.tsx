@@ -1,7 +1,9 @@
 import { useRef, useState, useCallback, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAppStore } from '@/store/useAppStore'
-import { useProjectSync } from '@/hooks/useProjectSync'
+import { useProjectSync } from "@/hooks/useProjectSync"
+import { useGridSystem } from "@/hooks/useGridSystem"
+import GridPanel from "@/components/panels/GridPanel"
 import { saveDrawing, loadDrawing, autoSaveLocal, extractBIMSummary } from '@/lib/canvasStorage'
 import { markDrawingComplete } from '@/lib/hubSync'
 
@@ -17,10 +19,10 @@ import ToastContainer, { toast } from '@/components/ui/Toast'
 import {
   ArrowLeft, PanelLeftOpen, PanelRightOpen,
   Save, Download, Cpu, Info,
-  Layers, LayoutList, RefreshCw, CheckCircle
+  Layers, LayoutList, RefreshCw, CheckCircle, Grid3x3
 } from 'lucide-react'
 
-type LeftTab = 'layers' | 'floors' | 'info'
+type LeftTab = 'layers' | 'floors' | 'info' | 'grid'
 
 export default function DrawingPage() {
   const { projectId } = useParams<{ projectId: string }>()
@@ -38,6 +40,9 @@ export default function DrawingPage() {
 
   const [leftTab, setLeftTab] = useState<LeftTab>('layers')
   const canvasRef = useRef<any>(null)
+
+  // Grid system
+  const gridHook = useGridSystem(canvasRef.current, projectId ?? "")
 
   // Auto-save every 2 min
   useEffect(() => {
@@ -139,7 +144,8 @@ export default function DrawingPage() {
         <div className="w-px h-5 bg-panel-border" />
 
         {syncState.status === 'success' && (
-          <CheckCircle size={12} className="text-accent-success" aria-label="Hub synced" />
+    gridHook.loadGrid()
+          <CheckCircle size={12} className="text-accent-success" title="Hub synced" />
         )}
         {syncState.status === 'error' && (
           <button onClick={retry} className="toolbar-btn w-8 h-8">
@@ -182,14 +188,18 @@ export default function DrawingPage() {
               <TabBtn active={leftTab === 'floors'} onClick={() => setLeftTab('floors')} title="Floors">
                 <LayoutList size={12} />
               </TabBtn>
-              <TabBtn active={leftTab === 'info'} onClick={() => setLeftTab('info')} title="Project Info">
+              <TabBtn active={leftTab === "info"} onClick={() => setLeftTab("info")} title="Project Info">
+              <Info size={12} />
+            </TabBtn>
+            <TabBtn active={leftTab === "grid"} onClick={() => setLeftTab("grid")} title="Structural Grid">
                 <Info size={12} />
               </TabBtn>
             </div>
             <div className="flex-1 overflow-hidden">
               {leftTab === 'layers' && <LayerPanel />}
               {leftTab === 'floors' && <FloorManager />}
-              {leftTab === 'info'   && <ProjectInfoPanel />}
+              {leftTab === "info"   && <ProjectInfoPanel />}
+              {leftTab === "grid"   && <GridPanel hook={gridHook} />}
             </div>
           </div>
         )}

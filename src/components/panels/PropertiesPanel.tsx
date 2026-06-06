@@ -1,11 +1,17 @@
+import { fabric } from 'fabric'
 import { useAppStore } from '@/store/useAppStore'
 import {
-  Settings, Grid3x3, Magnet, Eye,
+  Settings, Grid3x3, Magnet,
   ChevronDown, ChevronUp
 } from 'lucide-react'
+import ObjectProperties from '@/components/panels/ObjectProperties'
 import { useState } from 'react'
 
-export default function PropertiesPanel() {
+interface PropsPanelProps {
+  canvas?: fabric.Canvas | null
+}
+
+export default function PropertiesPanel({ canvas }: PropsPanelProps) {
   const {
     rightPanelOpen,
     gridSize, setGridSize,
@@ -33,6 +39,19 @@ export default function PropertiesPanel() {
           Properties
         </span>
       </div>
+
+      {/* ── Selected Object Properties ────────── */}
+      <div className="border-b border-panel-border">
+        <button
+          onClick={() => {}}
+          className="w-full flex items-center gap-2 px-3 py-2"
+        >
+          <span className="section-label px-0 py-0 text-text-muted">Selected Object</span>
+        </button>
+        <ObjectProperties canvas={canvas ?? null} />
+      </div>
+
+      <div className="divider" />
 
       {/* ── Canvas Settings ────────────────────── */}
       <SectionHeader
