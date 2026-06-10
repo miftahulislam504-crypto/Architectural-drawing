@@ -159,3 +159,12 @@ html, body, #root {
 .transition-panel {
   transition: width 0.2s ease, opacity 0.2s ease;
 }
+
+/* ─── CAD Button ─────────────────────────────────────── */
+.cad-btn {
+  @apply px-2 py-1.5 rounded border border-panel-border
+         text-2xs text-text-muted font-mono
+         hover:text-text-primary hover:bg-panel-hover hover:border-panel-active
+         transition-all duration-100 cursor-pointer select-none;
+}
+

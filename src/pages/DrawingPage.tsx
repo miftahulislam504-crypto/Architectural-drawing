@@ -3,7 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useAppStore } from '@/store/useAppStore'
 import { useProjectSync } from "@/hooks/useProjectSync"
 import { useGridSystem } from "@/hooks/useGridSystem"
-import GridPanel from "@/components/panels/GridPanel"
+import GridPanel           from "@/components/panels/GridPanel"
+import AnnotationPanel     from '@/components/panels/AnnotationPanel'
+import DrawingSetupPanel   from '@/components/panels/DrawingSetupPanel'
+import CADToolsPanel        from '@/components/panels/CADToolsPanel'
+import SchedulePanel        from '@/components/panels/SchedulePanel'
+import QuantityPanel        from '@/components/panels/QuantityPanel'
+import BNBCPanel            from '@/components/panels/BNBCPanel'
+import ExportPanel          from '@/components/panels/ExportPanel'
+import IntegrationPanel     from '@/components/panels/IntegrationPanel'
+import { useCADTools }      from '@/hooks/useCADTools'
 import { saveDrawing, loadDrawing, autoSaveLocal, extractBIMSummary } from '@/lib/canvasStorage'
 import { markDrawingComplete } from '@/lib/hubSync'
 
@@ -19,10 +28,11 @@ import ToastContainer, { toast } from '@/components/ui/Toast'
 import {
   ArrowLeft, PanelLeftOpen, PanelRightOpen,
   Save, Download, Cpu, Info,
-  Layers, LayoutList, RefreshCw, CheckCircle, Grid3x3
+  Layers, LayoutList, RefreshCw, CheckCircle, Grid3x3,
+  Tag, Wrench, FileText as FileSetup, ListChecks, Hash, ShieldCheck, Share2,
 } from 'lucide-react'
 
-type LeftTab = 'layers' | 'floors' | 'info' | 'grid'
+type LeftTab = 'layers' | 'floors' | 'info' | 'grid' | 'annotate' | 'setup' | 'cad' | 'schedule' | 'qty' | 'bnbc' | 'export' | 'integrate'
 
 export default function DrawingPage() {
   const { projectId } = useParams<{ projectId: string }>()
@@ -43,6 +53,9 @@ export default function DrawingPage() {
 
   // Grid system
   const gridHook = useGridSystem(canvasRef.current, projectId ?? "")
+
+  // CAD tools
+  const cadHook = useCADTools(canvasRef.current)
 
   // Auto-save every 2 min
   useEffect(() => {
@@ -156,7 +169,11 @@ export default function DrawingPage() {
         <button onClick={handleSave} className="toolbar-btn w-8 h-8" title="Save (Ctrl+S)">
           <Save size={14} />
         </button>
-        <button className="toolbar-btn w-8 h-8 opacity-40 cursor-not-allowed" disabled title="Phase 10-এ আসবে">
+        <button
+          onClick={() => { if (!leftPanelOpen) toggleLeftPanel(); setLeftTab('export') }}
+          className="toolbar-btn w-8 h-8"
+          title="Export PDF/PNG/SVG"
+        >
           <Download size={14} />
         </button>
         <div className="w-px h-5 bg-panel-border" />
@@ -181,7 +198,7 @@ export default function DrawingPage() {
           <div className="flex flex-col bg-panel-bg border-r border-panel-border animate-fade-in shrink-0"
             style={{ width: '200px' }}>
             {/* Tabs */}
-            <div className="flex border-b border-panel-border shrink-0" style={{ height: '32px' }}>
+            <div className="flex border-b border-panel-border shrink-0" style={{ height: "28px" }}>
               <TabBtn active={leftTab === 'layers'} onClick={() => setLeftTab('layers')} title="Layers">
                 <Layers size={12} />
               </TabBtn>
@@ -192,14 +209,74 @@ export default function DrawingPage() {
               <Info size={12} />
             </TabBtn>
             <TabBtn active={leftTab === "grid"} onClick={() => setLeftTab("grid")} title="Structural Grid">
+              <Grid3x3 size={12} />
+            </TabBtn>
+            <TabBtn active={leftTab === "annotate"} onClick={() => setLeftTab("annotate")} title="Annotations">
+              <Tag size={12} />
+            </TabBtn>
+            <TabBtn active={leftTab === "setup"} onClick={() => setLeftTab("setup")} title="Drawing Setup">
+              <FileSetup size={12} />
+            </TabBtn>
+            <TabBtn active={leftTab === "cad"} onClick={() => setLeftTab("cad")} title="CAD Tools">
+              <Wrench size={12} />
+            </TabBtn>
+            <TabBtn active={leftTab === "schedule"} onClick={() => setLeftTab("schedule")} title="Schedules">
+              <ListChecks size={12} />
+            </TabBtn>
+            <TabBtn active={leftTab === "qty"} onClick={() => setLeftTab("qty")} title="Quantity/BOQ">
+              <Hash size={12} />
+            </TabBtn>
+            <TabBtn active={leftTab === "bnbc"} onClick={() => setLeftTab("bnbc")} title="BNBC Checker">
+              <ShieldCheck size={12} />
+            </TabBtn>
+            <TabBtn active={leftTab === "export"} onClick={() => setLeftTab("export")} title="Export">
+              <Download size={12} />
+            </TabBtn>
+            <TabBtn active={leftTab === "integrate"} onClick={() => setLeftTab("integrate")} title="Integration">
+              <Share2 size={12} />
                 <Info size={12} />
               </TabBtn>
             </div>
             <div className="flex-1 overflow-hidden">
               {leftTab === 'layers' && <LayerPanel />}
               {leftTab === 'floors' && <FloorManager />}
-              {leftTab === "info"   && <ProjectInfoPanel />}
-              {leftTab === "grid"   && <GridPanel hook={gridHook} />}
+              {leftTab === "info"     && <ProjectInfoPanel />}
+              {leftTab === "grid"     && <GridPanel hook={gridHook} />}
+              {leftTab === "annotate" && <AnnotationPanel canvas={canvasRef.current} />}
+              {leftTab === "setup"    && <DrawingSetupPanel canvas={canvasRef.current} />}
+              {leftTab === "cad"      && <CADToolsPanel hook={cadHook} />}
+              {leftTab === "schedule" && (
+                <SchedulePanel
+                  canvas={canvasRef.current}
+                  projectId={projectId ?? ''}
+                  floorId={activeFloorId ?? 'gf'}
+                />
+              )}
+              {leftTab === "qty" && (
+                <QuantityPanel
+                  canvas={canvasRef.current}
+                  projectId={projectId ?? ''}
+                  floorId={activeFloorId ?? 'gf'}
+                />
+              )}
+              {leftTab === "bnbc" && (
+                <BNBCPanel
+                  canvas={canvasRef.current}
+                  projectId={projectId ?? ''}
+                />
+              )}
+              {leftTab === "export" && (
+                <ExportPanel
+                  canvas={canvasRef.current}
+                  projectId={projectId ?? ''}
+                />
+              )}
+              {leftTab === "integrate" && (
+                <IntegrationPanel
+                  canvas={canvasRef.current}
+                  projectId={projectId ?? ''}
+                />
+              )}
             </div>
           </div>
         )}
@@ -210,7 +287,7 @@ export default function DrawingPage() {
 
         {rightPanelOpen && (
           <div className="animate-fade-in shrink-0">
-            <PropertiesPanel />
+            <PropertiesPanel canvas={canvasRef.current} />
           </div>
         )}
       </div>

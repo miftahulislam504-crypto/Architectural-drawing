@@ -136,7 +136,7 @@ export type ActiveTool =
   | 'wall' | 'door' | 'window'
   | 'column' | 'room'
   | 'grid' | 'dimension'
-  | 'text' | 'line' | 'polyline'
+  | 'text' | 'line' | 'polyline' | 'arc'
   | 'circle' | 'rectangle'
   | 'eraser'
 
