@@ -157,8 +157,7 @@ export default function DrawingPage() {
         <div className="w-px h-5 bg-panel-border" />
 
         {syncState.status === 'success' && (
-    gridHook.loadGrid()
-          <CheckCircle size={12} className="text-accent-success" title="Hub synced" />
+          <CheckCircle size={12} className="text-accent-success" aria-label="Hub synced" />
         )}
         {syncState.status === 'error' && (
           <button onClick={retry} className="toolbar-btn w-8 h-8">
@@ -234,8 +233,7 @@ export default function DrawingPage() {
             </TabBtn>
             <TabBtn active={leftTab === "integrate"} onClick={() => setLeftTab("integrate")} title="Integration">
               <Share2 size={12} />
-                <Info size={12} />
-              </TabBtn>
+            </TabBtn>
             </div>
             <div className="flex-1 overflow-hidden">
               {leftTab === 'layers' && <LayerPanel />}

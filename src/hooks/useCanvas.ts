@@ -323,11 +323,11 @@ export function useCanvas({ canvasId, onMouseMove, onZoomChange }: UseCanvasOpti
     canvas.on('mouse:dblclick',    onDblClick)
 
     return () => {
-      canvas.off('mouse:down',     onDown)
+      canvas.off('mouse:down',     onDown as any)
       canvas.off('mouse:move',     onMove as any)
-      canvas.off('mouse:up',       onUp)
+      canvas.off('mouse:up',       onUp as any)
       canvas.off('mouse:wheel',    onWheel as any)
-      canvas.off('mouse:dblclick', onDblClick)
+      canvas.off('mouse:dblclick', onDblClick as any)
     }
   }, [activeTool, getSnapped, activeLayerId, gridSize, showGrid, setViewport, onMouseMove, onZoomChange])
 
