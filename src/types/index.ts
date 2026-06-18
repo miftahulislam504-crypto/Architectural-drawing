@@ -1,41 +1,80 @@
 // ─── Project (from Hub) ──────────────────────────────
+// Fields must match exactly what Hub saves to Firestore
 export interface HubProject {
-  id: string
-  name: string
-  clientName: string
-  location: string
-  status: 'active' | 'hold' | 'done'
-  createdAt: string
+  id:          string
+  projectCode: string
+  projectName: string   // Hub uses projectName (not name)
+  clientName:  string
+  location:    string
+  description?: string
+  status:      'active' | 'on_hold' | 'completed'  // Hub uses on_hold (not hold)
+  startDate:   any      // Firestore Timestamp or Date
+  endDate?:    any
+  createdBy:   string
+  createdAt:   any      // Firestore Timestamp
+  updatedAt?:  any
 }
 
 // ─── Site Information ─────────────────────────────────
+// Matches Hub's site_information/data document fields
 export interface SiteInfo {
-  plotArea: number          // sqm
-  plotWidth: number         // m
-  plotDepth: number         // m
-  roadWidth: number         // m
-  soilType: 'S1' | 'S2' | 'S3' | 'S4'
-  district: string
-  address: string
+  projectId:        string
+  address:          string
+  district:         string
+  upazila:          string
+  latitude?:        number
+  longitude?:       number
+  plotArea?:        number
+  plotAreaUnit:     'sqm' | 'sqft' | 'katha' | 'bigha' | 'acre'
+  roadWidth?:       number
+  roadType?:        string
+  soilType:         'S1' | 'S2' | 'S3' | 'S4'
+  groundLevel?:     number
+  floodLevel?:      number
+  groundwaterDepth?: number
+  notes?:           string
 }
 
 // ─── BNBC Settings ───────────────────────────────────
+// Matches Hub's bnbc_settings/data document fields
 export interface BNBCSettings {
-  seismicZone: 1 | 2 | 3 | 4
-  windZone: 1 | 2 | 3
-  occupancyType: 'A' | 'B' | 'C' | 'D' | 'E' | 'F'
-  importanceFactor: number
-  basicWindSpeed: number
-  riskCategory: string
+  projectId:           string
+  occupancyType:       string
+  riskCategory:        string
+  seismicZone:         string   // 'Z1' | 'Z2' | 'Z3'
+  seismicZoneCoeff:    number
+  importanceFactor:    number
+  windZone:            string   // 'A' | 'B' | 'C'
+  basicWindSpeed:      number
+  liveLoadType:        string
+  liveLoadValue:       number
+  soilType:            string
+  spectralAcceleration: number
+  responseModFactor:   number
+  structuralSystem:    string
 }
 
 // ─── Building Info ────────────────────────────────────
+// Matches Hub's building_information/data document fields
 export interface BuildingInfo {
-  buildingType: 'RCC' | 'Steel' | 'Masonry'
-  totalFloors: number
-  floorHeight: number       // m
-  basementCount: number
-  totalHeight: number       // m (auto calculated)
+  projectId:         string
+  buildingType:      string    // 'RCC' | 'Steel' | 'Masonry'
+  usageType:         string
+  structureSystem:   string
+  numFloors:         number    // Hub uses numFloors (not totalFloors)
+  basementCount:     number
+  floorHeight:       number    // m
+  groundFloorHeight: number    // m
+  totalHeight:       number    // m (auto calculated)
+  roofType:          string
+  buildingLength?:   number
+  buildingWidth?:    number
+  totalFloorArea?:   number
+  hasLift:           boolean
+  hasGenerator:      boolean
+  hasWaterTank:      boolean
+  hasParkingFloor:   boolean
+  notes?:            string
 }
 
 // ─── Floor ───────────────────────────────────────────

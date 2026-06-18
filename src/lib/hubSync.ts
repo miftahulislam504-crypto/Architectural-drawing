@@ -9,9 +9,9 @@ import type {
 } from '@/types'
 
 // ─── Collection paths (matching Hub's Firestore structure) ────
-// Hub uses: projects/{id}/siteInfo/data
-//           projects/{id}/bnbcSettings/data
-//           projects/{id}/buildingInfo/data
+// Hub uses: projects/{id}/site_information/data
+//           projects/{id}/bnbc_settings/data
+//           projects/{id}/building_information/data
 
 export interface FullProjectData {
   project:      HubProject
@@ -33,29 +33,29 @@ export async function fetchProjectData(
   }
   const project = { id: projSnap.id, ...projSnap.data() } as HubProject
 
-  // 2. Site Info
+  // 2. Site Info — Hub saves to: projects/{id}/site_information/data
   let siteInfo: SiteInfo | null = null
   try {
     const snap = await getDoc(
-      doc(db, 'projects', projectId, 'siteInfo', 'data')
+      doc(db, 'projects', projectId, 'site_information', 'data')
     )
     if (snap.exists()) siteInfo = snap.data() as SiteInfo
   } catch { /* optional */ }
 
-  // 3. BNBC Settings
+  // 3. BNBC Settings — Hub saves to: projects/{id}/bnbc_settings/data
   let bnbcSettings: BNBCSettings | null = null
   try {
     const snap = await getDoc(
-      doc(db, 'projects', projectId, 'bnbcSettings', 'data')
+      doc(db, 'projects', projectId, 'bnbc_settings', 'data')
     )
     if (snap.exists()) bnbcSettings = snap.data() as BNBCSettings
   } catch { /* optional */ }
 
-  // 4. Building Info
+  // 4. Building Info — Hub saves to: projects/{id}/building_information/data
   let buildingInfo: BuildingInfo | null = null
   try {
     const snap = await getDoc(
-      doc(db, 'projects', projectId, 'buildingInfo', 'data')
+      doc(db, 'projects', projectId, 'building_information', 'data')
     )
     if (snap.exists()) buildingInfo = snap.data() as BuildingInfo
   } catch { /* optional */ }
@@ -80,8 +80,11 @@ export async function fetchAllProjects(): Promise<HubProject[]> {
 }
 
 // ─── Generate floors from BuildingInfo ───────────────
+// Hub uses numFloors (not totalFloors)
 export function generateFloors(info: BuildingInfo | null): Floor[] {
-  if (!info || info.totalFloors <= 0) {
+  const totalFloors = info?.numFloors ?? 0
+
+  if (!info || totalFloors <= 0) {
     // Default: Ground + 1st Floor
     return [
       { id: 'gf', name: 'Ground Floor', level: 0,    height: 3000, order: 0 },
@@ -104,7 +107,7 @@ export function generateFloors(info: BuildingInfo | null): Floor[] {
   }
 
   // Ground + upper floors
-  for (let i = 0; i < info.totalFloors; i++) {
+  for (let i = 0; i < totalFloors; i++) {
     floors.push({
       id:     i === 0 ? 'gf' : `${i}f`,
       name:   i === 0 ? 'Ground Floor' : `${getOrdinal(i)} Floor`,
@@ -118,9 +121,9 @@ export function generateFloors(info: BuildingInfo | null): Floor[] {
   floors.push({
     id:     'roof',
     name:   'Roof',
-    level:  info.totalFloors * heightMm,
+    level:  totalFloors * heightMm,
     height: 0,
-    order:  info.totalFloors,
+    order:  totalFloors,
   })
 
   return floors.sort((a, b) => a.order - b.order)

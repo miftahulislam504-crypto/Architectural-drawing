@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { collection, getDocs, query, orderBy } from 'firebase/firestore'
+import { collection, getDocs, query, orderBy, where } from 'firebase/firestore'
 import { db } from '@/lib/firebase'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useAppStore } from '@/store/useAppStore'
 import type { HubProject } from '@/types'
 import {
   FolderOpen, Search, ChevronRight,
-  MapPin, User, Clock, AlertCircle
+  MapPin, User, Clock, AlertCircle, Hash
 } from 'lucide-react'
 
 export default function ProjectSelectPage() {
@@ -20,12 +21,20 @@ export default function ProjectSelectPage() {
   const [error, setError] = useState('')
 
   // Load projects from Firestore (Hub's projects collection)
+  // Filters by createdBy == current user uid — matching Hub's query
   useEffect(() => {
-    const load = async () => {
+    const auth = getAuth()
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        setError('লগইন করুন। Hub-এ login করা থাকতে হবে।')
+        setLoading(false)
+        return
+      }
       try {
         setLoading(true)
         const q = query(
           collection(db, 'projects'),
+          where('createdBy', '==', user.uid),
           orderBy('createdAt', 'desc')
         )
         const snap = await getDocs(q)
@@ -41,11 +50,11 @@ export default function ProjectSelectPage() {
       } finally {
         setLoading(false)
       }
-    }
-    load()
+    })
+    return () => unsub()
   }, [])
 
-  // Search filter
+  // Search filter — uses projectName (Hub's actual field)
   useEffect(() => {
     if (!search.trim()) {
       setFiltered(projects)
@@ -55,9 +64,10 @@ export default function ProjectSelectPage() {
     setFiltered(
       projects.filter(
         (p) =>
-          p.name.toLowerCase().includes(q) ||
+          p.projectName?.toLowerCase().includes(q) ||
           p.clientName?.toLowerCase().includes(q) ||
-          p.location?.toLowerCase().includes(q)
+          p.location?.toLowerCase().includes(q) ||
+          p.projectCode?.toLowerCase().includes(q)
       )
     )
   }, [search, projects])
@@ -68,16 +78,30 @@ export default function ProjectSelectPage() {
     navigate(`/draw/${project.id}`)
   }
 
+  // Hub status values: 'active' | 'on_hold' | 'completed'
   const statusColor = (s: string) => {
-    if (s === 'active') return 'text-accent-success bg-accent-success/10'
-    if (s === 'hold')   return 'text-accent-warning bg-accent-warning/10'
+    if (s === 'active')    return 'text-accent-success bg-accent-success/10'
+    if (s === 'on_hold')   return 'text-accent-warning bg-accent-warning/10'
+    if (s === 'completed') return 'text-text-muted bg-panel-active'
     return 'text-text-muted bg-panel-active'
   }
 
   const statusLabel = (s: string) => {
-    if (s === 'active') return 'Active'
-    if (s === 'hold')   return 'Hold'
-    return 'Done'
+    if (s === 'active')    return 'চলমান'
+    if (s === 'on_hold')   return 'বিরতি'
+    if (s === 'completed') return 'সম্পন্ন'
+    return s
+  }
+
+  // Format Firestore Timestamp or ISO string
+  const formatDate = (val: any): string => {
+    if (!val) return ''
+    try {
+      const d = val?.toDate ? val.toDate() : new Date(val)
+      return d.toLocaleDateString('bn-BD')
+    } catch {
+      return ''
+    }
   }
 
   return (
@@ -102,7 +126,7 @@ export default function ProjectSelectPage() {
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
           <input
             className="cad-input pl-8"
-            placeholder="প্রজেক্ট খুঁজুন..."
+            placeholder="প্রজেক্ট নাম, কোড বা ক্লায়েন্ট খুঁজুন..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -115,7 +139,7 @@ export default function ProjectSelectPage() {
         {loading && (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <div className="spinner" />
-            <p className="text-text-muted text-xs">Loading projects...</p>
+            <p className="text-text-muted text-xs">Hub থেকে লোড হচ্ছে...</p>
           </div>
         )}
 
@@ -146,9 +170,17 @@ export default function ProjectSelectPage() {
                          transition-all duration-150 group"
             >
               <div className="flex items-start justify-between gap-2 mb-2">
-                <h3 className="font-display font-semibold text-text-primary text-sm leading-tight">
-                  {project.name}
-                </h3>
+                <div className="flex-1 min-w-0">
+                  {/* Project code badge */}
+                  {project.projectCode && (
+                    <span className="text-2xs font-mono text-text-muted bg-panel-active px-1.5 py-0.5 rounded mb-1 inline-block">
+                      {project.projectCode}
+                    </span>
+                  )}
+                  <h3 className="font-display font-semibold text-text-primary text-sm leading-tight">
+                    {project.projectName}
+                  </h3>
+                </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className={`text-2xs px-2 py-0.5 rounded-full font-mono ${statusColor(project.status)}`}>
                     {statusLabel(project.status)}
@@ -174,7 +206,7 @@ export default function ProjectSelectPage() {
                 {project.createdAt && (
                   <div className="flex items-center gap-1.5 text-2xs text-text-muted">
                     <Clock size={11} />
-                    <span>{new Date(project.createdAt).toLocaleDateString('bn-BD')}</span>
+                    <span>{formatDate(project.createdAt)}</span>
                   </div>
                 )}
               </div>
