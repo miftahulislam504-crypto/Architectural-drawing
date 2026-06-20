@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Bengali:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,21 +6,27 @@
 
 /* ─── CSS Variables ─────────────────────────────── */
 :root {
+  /* Canvas stays dark — this is the CAD drawing surface only */
   --canvas-bg: #0D0F12;
   --canvas-grid-major: #1F2328;
   --canvas-grid-minor: #161920;
-  --panel-bg: #12151A;
-  --panel-border: #2A2D35;
-  --accent: #00B4D8;
-  --accent-dim: rgba(0, 180, 216, 0.15);
+
+  /* UI chrome (panels/toolbar/header) — unified light system */
+  --panel-bg: #f9fafb;
+  --panel-border: #e5e7eb;
+  --accent: #1a56db;
+  --accent-dim: rgba(26, 86, 219, 0.12);
+
+  /* Fallback text color for the dark canvas backdrop only —
+     all panel/page text uses explicit Tailwind text-* classes */
   --text-primary: #E8EAF0;
   --text-secondary: #9CA3AF;
   --text-muted: #6B7280;
 
-  /* Scrollbar */
-  --scrollbar-track: #12151A;
-  --scrollbar-thumb: #2A2D35;
-  --scrollbar-thumb-hover: #3A3D45;
+  /* Scrollbar — light, matches panel UI */
+  --scrollbar-track: #f3f4f6;
+  --scrollbar-thumb: #d1d5db;
+  --scrollbar-thumb-hover: #9ca3af;
 }
 
 /* ─── Base Reset ─────────────────────────────────── */
@@ -36,7 +42,7 @@ html, body, #root {
   overflow: hidden;
   background-color: var(--canvas-bg);
   color: var(--text-primary);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -52,8 +58,8 @@ html, body, #root {
 
 /* ─── Selection ──────────────────────────────────── */
 ::selection {
-  background: rgba(0, 180, 216, 0.25);
-  color: #E8EAF0;
+  background: rgba(26, 86, 219, 0.25);
+  color: #ffffff;
 }
 
 /* ─── Fabric Canvas ──────────────────────────────── */
@@ -91,7 +97,7 @@ html, body, #root {
 
 .toolbar-btn.active {
   @apply text-accent-primary bg-panel-active;
-  box-shadow: 0 0 0 1px rgba(0, 180, 216, 0.4);
+  box-shadow: 0 0 0 1px rgba(26, 86, 219, 0.4);
 }
 
 .toolbar-btn:active {
@@ -100,9 +106,10 @@ html, body, #root {
 
 /* ─── Input Fields ───────────────────────────────── */
 .cad-input {
-  @apply w-full bg-canvas-bg border border-panel-border rounded
+  @apply w-full bg-white border border-panel-border rounded
          text-text-primary text-xs font-mono px-2 py-1.5
          focus:outline-none focus:border-accent-primary
+         focus:ring-2 focus:ring-accent-primary/20
          transition-colors duration-150;
 }
 
@@ -125,9 +132,9 @@ html, body, #root {
 
 /* ─── Tooltip ────────────────────────────────────── */
 .tooltip {
-  @apply absolute z-50 text-xs bg-canvas-grid text-text-primary
+  @apply absolute z-50 text-xs bg-gray-900 text-white
          px-2 py-1 rounded pointer-events-none whitespace-nowrap;
-  box-shadow: var(--shadow-tooltip, 0 2px 8px rgba(0,0,0,0.6));
+  box-shadow: var(--shadow-tooltip, 0 2px 8px rgba(0,0,0,0.25));
 }
 
 /* ─── Status Bar ─────────────────────────────────── */
@@ -152,7 +159,7 @@ html, body, #root {
 
 /* ─── Accent Glow ────────────────────────────────── */
 .accent-glow {
-  box-shadow: 0 0 12px rgba(0, 180, 216, 0.3);
+  box-shadow: 0 0 12px rgba(26, 86, 219, 0.3);
 }
 
 /* ─── Transitions ────────────────────────────────── */

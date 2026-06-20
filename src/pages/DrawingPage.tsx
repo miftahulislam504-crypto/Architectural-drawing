@@ -98,9 +98,9 @@ export default function DrawingPage() {
         columnCount: summary.columnCount,
         floorCount:  floors.length,
       })
-      toast.success(`"${activeFloorId}" floor সেভ হয়েছে`)
+      toast.success(`"${activeFloorId}" floor saved`)
     } catch {
-      toast.error('Save করতে সমস্যা হয়েছে')
+      toast.error('Problem saving')
     }
   }, [projectId, activeFloorId, floors.length])
 

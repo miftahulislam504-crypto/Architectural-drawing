@@ -161,10 +161,10 @@ export function runBNBCChecks(
     : 100
 
   const summary = failed > 0
-    ? `${failed}টি critical issue সমাধান করতে হবে`
+    ? `${failed} critical issue(s) must be resolved`
     : warnings > 0
-    ? `${warnings}টি warning আছে — review করুন`
-    : 'সব compliance check pass হয়েছে'
+    ? `${warnings} warning(s) — please review`
+    : 'All compliance checks passed'
 
   return {
     projectId,
@@ -280,9 +280,9 @@ function checkSetbacks(
       id: 'setback-front',
       category: 'setback',
       title: 'Front Setback',
-      description: `Road width ${site.roadWidth}m অনুযায়ী minimum front setback`,
+      description: `Minimum front setback for road width ${site.roadWidth}m`,
       status: 'pass',
-      actual: 'Drawing থেকে measure করুন',
+      actual: 'Measure from drawing',
       required: `≥ ${rule.front}m`,
       remarks: `RAJUK/BNBC: Road ${site.roadWidth}m → Front setback ${rule.front}m`,
       bnbcRef: 'BNBC 2020, Part 3, Chapter 3.3',
@@ -316,7 +316,7 @@ function checkSetbacks(
       id: 'setback-max-bld',
       category: 'setback',
       title: 'Max Building Footprint',
-      description: 'Setback বাদে maximum building size',
+      description: 'Maximum building size after setbacks',
       status: maxBldW > 0 && maxBldD > 0 ? 'pass' : 'fail',
       actual: `Plot: ${plotW}×${plotD}m`,
       required: `Max bld: ${maxBldW.toFixed(1)}×${maxBldD.toFixed(1)}m`,
@@ -352,9 +352,9 @@ function checkFAR(
       id:          'far',
       category:    'far',
       title:       'Floor Area Ratio (FAR)',
-      description: `Occupancy Type ${occupancy} অনুযায়ী maximum FAR`,
+      description: `Maximum FAR for Occupancy Type ${occupancy}`,
       status:      farStatus,
-      actual:      actualFAR > 0 ? `FAR = ${actualFAR.toFixed(2)}` : 'Room data নেই',
+      actual:      actualFAR > 0 ? `FAR = ${actualFAR.toFixed(2)}` : 'No room data',
       required:    `FAR ≤ ${rule.far}`,
       remarks:     `Plot: ${plotArea}m² → Max floor area: ${maxFloorArea.toFixed(0)}m²`,
       bnbcRef:     'BNBC 2020, Part 3, Chapter 3.4',
@@ -364,7 +364,7 @@ function checkFAR(
       id:          'max-floor-area',
       category:    'far',
       title:       'Total Floor Area',
-      description: 'FAR অনুযায়ী maximum allowable floor area',
+      description: 'Maximum allowable floor area per FAR',
       status:      data.totalFloorArea === 0 ? 'na'
                  : data.totalFloorArea <= maxFloorArea ? 'pass' : 'fail',
       actual:      `${data.totalFloorArea.toFixed(1)} m²`,
@@ -416,9 +416,9 @@ function checkStairs(data: CanvasData, bld: BuildingInfo | null): CheckResult[] 
       title:       'Stair Width',
       description: 'Minimum clear stair width',
       status:      'warning',
-      actual:      'Drawing-এ Stair আঁকুন',
+      actual:      'Draw the Stair',
       required:    `≥ ${minWidth}mm clear`,
-      remarks:     `${floors} তলা building → min ${minWidth}mm stair width`,
+      remarks:     `${floors}-storey building → min ${minWidth}mm stair width`,
       bnbcRef:     'BNBC 2020, Part 4, Chapter 4.3',
       severity:    'critical',
     },
@@ -428,7 +428,7 @@ function checkStairs(data: CanvasData, bld: BuildingInfo | null): CheckResult[] 
       title:       'Stair Rise',
       description: 'Maximum riser height',
       status:      'warning',
-      actual:      'Stair object নেই',
+      actual:      'No stair object',
       required:    `≤ ${STAIR_RULES.maxRise}mm`,
       remarks:     'Standard: Rise ≤ 190mm, Tread ≥ 250mm',
       bnbcRef:     'BNBC 2020, Part 4, Chapter 4.3.2',
@@ -438,7 +438,7 @@ function checkStairs(data: CanvasData, bld: BuildingInfo | null): CheckResult[] 
       id:          'stair-count',
       category:    'stair',
       title:       'Number of Staircases',
-      description: `${floors} তলার জন্য required staircase count`,
+      description: `Required staircase count for ${floors} floor(s)`,
       status:      requiredStairs === 1 ? 'pass' : 'warning',
       actual:      `${data.stairCount} nos (from drawing)`,
       required:    `≥ ${requiredStairs} nos`,
@@ -487,7 +487,7 @@ function checkFireEscape(data: CanvasData, bld: BuildingInfo | null): CheckResul
       title:       'Travel Distance to Exit',
       description: 'Maximum travel distance to nearest exit',
       status:      'warning',
-      actual:      'Auto-measure করা হয়নি',
+      actual:      'Not auto-measured',
       required:    '≤ 30m (sprinklered: ≤ 45m)',
       remarks:     'BNBC: Max 30m travel distance to nearest exit',
       bnbcRef:     'BNBC 2020, Part 4, Chapter 4.2.3',
@@ -501,7 +501,7 @@ function checkFireEscape(data: CanvasData, bld: BuildingInfo | null): CheckResul
       status:      data.doors.every((d) => d.width >= 900) ? 'pass' : 'fail',
       actual:      data.doors.length > 0
         ? `Min door: ${Math.min(...data.doors.map((d) => d.width))}mm`
-        : 'Door নেই',
+        : 'No doors',
       required:    '≥ 900mm clear',
       remarks:     'Exit doors must be min 900mm wide',
       bnbcRef:     'BNBC 2020, Part 4, Chapter 4.2.2',
@@ -519,7 +519,7 @@ function checkParking(
     return [{
       id: 'parking', category: 'parking',
       title: 'Parking Requirement',
-      description: 'Site info নেই — Hub-এ সেট করুন',
+      description: 'No site info — set it in Hub',
       status: 'na', actual: '—', required: '—',
       remarks: 'Requires site info and building info',
       bnbcRef: 'BNBC 2020, Part 3, Chapter 3.6',
@@ -536,9 +536,9 @@ function checkParking(
       id:          'parking-count',
       category:    'parking',
       title:       'Parking Spaces',
-      description: `Occupancy Type ${occupancy} অনুযায়ী required parking`,
+      description: `Required parking for Occupancy Type ${occupancy}`,
       status:      required <= 0 ? 'na' : 'warning',
-      actual:      'Drawing-এ parking যোগ করুন',
+      actual:      'Add parking in the drawing',
       required:    `≥ ${required} spaces`,
       remarks:     `${data.totalFloorArea.toFixed(0)} m² × ${rule}/100m² = ${required} spaces`,
       bnbcRef:     'BNBC 2020, Part 3, Chapter 3.6',
@@ -588,9 +588,9 @@ function checkVentilation(data: CanvasData): CheckResult[] {
     results.push({
       id: 'ventilation-na', category: 'ventilation',
       title: 'Ventilation Check',
-      description: 'Room data প্রয়োজন',
+      description: 'Room data required',
       status: 'na', actual: '—', required: '≥ 10% window/floor ratio',
-      remarks: 'Room object আঁকুন',
+      remarks: 'Draw a room object',
       bnbcRef: 'BNBC 2020, Part 3, Chapter 3.11',
       severity: 'major',
     })
@@ -633,7 +633,7 @@ function checkCorridors(data: CanvasData): CheckResult[] {
       title:       'Corridor Width',
       description: 'Minimum clear corridor/passage width',
       status:      'warning',
-      actual:      'Drawing-এ corridor measure করুন',
+      actual:      'Measure corridor from drawing',
       required:    '≥ 1200mm clear',
       remarks:     'BNBC: Min 1200mm for corridors serving habitable rooms',
       bnbcRef:     'BNBC 2020, Part 4, Chapter 4.4',
@@ -650,7 +650,7 @@ function checkAccessibility(data: CanvasData): CheckResult[] {
       title:       'Wheelchair Ramp',
       description: 'Accessible ramp at building entrance',
       status:      'warning',
-      actual:      'Drawing-এ ramp দেখা যাচ্ছে না',
+      actual:      'No ramp visible in drawing',
       required:    'Slope ≤ 1:12, Width ≥ 1000mm',
       remarks:     'Required for public buildings (Occupancy B, C, E, F)',
       bnbcRef:     'BNBC 2020, Part 11, Chapter 11.2',
@@ -678,9 +678,9 @@ function checkBuildingHeight(
   if (!site || !bld) {
     return [{
       id: 'height', category: 'height',
-      title: 'Building Height', description: 'Info নেই',
+      title: 'Building Height', description: 'Info not available',
       status: 'na', actual: '—', required: '—',
-      remarks: 'Hub-এ Site + Building info সেট করুন',
+      remarks: 'Set Site + Building info in Hub',
       bnbcRef: 'BNBC 2020, Part 3, Chapter 3.5',
       severity: 'major',
     }]
@@ -713,9 +713,9 @@ function checkLiftRequirement(bld: BuildingInfo | null): CheckResult[] {
   if (!bld) {
     return [{
       id: 'lift', category: 'lift',
-      title: 'Lift Requirement', description: 'Building info নেই',
+      title: 'Lift Requirement', description: 'No building info',
       status: 'na', actual: '—', required: '—',
-      remarks: 'Hub-এ Building info সেট করুন',
+      remarks: 'Set Building info in Hub',
       bnbcRef: 'BNBC 2020, Part 4, Chapter 4.5',
       severity: 'minor',
     }]
@@ -729,7 +729,7 @@ function checkLiftRequirement(bld: BuildingInfo | null): CheckResult[] {
       id:          'lift',
       category:    'lift',
       title:       'Lift Requirement',
-      description: `${floors} তলার জন্য lift requirement`,
+      description: `Lift requirement for ${floors} floor(s)`,
       status:      !required ? 'pass'
                  : floors <= LIFT_RULES.highRiseFloors ? 'warning'
                  : 'warning',
@@ -738,8 +738,8 @@ function checkLiftRequirement(bld: BuildingInfo | null): CheckResult[] {
         ? `≥ ${floors > LIFT_RULES.highRiseFloors ? 2 : 1} lift(s)`
         : 'Not required',
       remarks:     required
-        ? `${floors} তলা > ${LIFT_RULES.requiredFloors} তলা → Lift required`
-        : `${floors} তলা ≤ ${LIFT_RULES.requiredFloors} তলা → Lift optional`,
+        ? `${floors} floors > ${LIFT_RULES.requiredFloors} floors → Lift required`
+        : `${floors} floors ≤ ${LIFT_RULES.requiredFloors} floors → Lift optional`,
       bnbcRef:     'BNBC 2020, Part 4, Chapter 4.5',
       severity:    'major',
     },
@@ -760,11 +760,11 @@ function checkDoorSizes(data: CanvasData): CheckResult[] {
                  : 'fail',
       actual:      data.doors.length > 0
         ? `Min: ${Math.min(...data.doors.map((d) => d.width))}mm`
-        : 'Door নেই',
+        : 'No doors',
       required:    '≥ 900mm all doors',
       remarks:     narrowDoors.length > 0
-        ? `${narrowDoors.length}টি door 900mm-এর কম`
-        : 'সব door OK',
+        ? `${narrowDoors.length} door(s) below 900mm`
+        : 'All doors OK',
       bnbcRef:     'BNBC 2020, Part 3, Chapter 3.9',
       severity:    'major',
     },

@@ -87,7 +87,7 @@ export default function FloorManager() {
       {/* Add floor form */}
       {showAdd && (
         <div className="px-3 py-2 bg-panel-hover border-b border-panel-border">
-          <p className="text-2xs text-text-muted mb-1.5 font-bengali">নতুন ফ্লোরের নাম</p>
+          <p className="text-2xs text-text-muted mb-1.5">New floor name</p>
           <div className="flex gap-1">
             <input
               className="cad-input flex-1"

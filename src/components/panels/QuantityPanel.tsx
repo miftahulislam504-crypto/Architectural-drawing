@@ -53,10 +53,10 @@ export default function QuantityPanel({
       await new Promise((r) => setTimeout(r, 80))
       const result = extractQuantities(canvas, floorId, projectId, floorH)
       setBOQ(result)
-      toast.success(`${result.items.length}টি BOQ item তৈরি হয়েছে`)
+      toast.success(`${result.items.length} BOQ item(s) generated`)
       setViewMode('summary')
     } catch {
-      toast.error('Quantity extract করতে সমস্যা হয়েছে')
+      toast.error('Problem extracting quantities')
     } finally {
       setLoading(false)
     }
@@ -74,9 +74,9 @@ export default function QuantityPanel({
           savedAt: serverTimestamp(),
         }
       )
-      toast.success('BOQ Firestore-এ save হয়েছে — Estimating App পড়তে পারবে ✓')
+      toast.success('BOQ saved to Firestore — Estimating App can now read it ✓')
     } catch {
-      toast.error('Save করতে সমস্যা')
+      toast.error('Problem saving')
     } finally {
       setSaving(false)
     }
@@ -93,7 +93,7 @@ export default function QuantityPanel({
     a.download = `${projectId}-${floorId}-boq.csv`
     a.click()
     URL.revokeObjectURL(url)
-    toast.success('BOQ CSV download হয়েছে')
+    toast.success('BOQ CSV downloaded')
   }, [boq, projectId, floorId])
 
   // ── Export JSON ───────────────────────────────────
@@ -107,7 +107,7 @@ export default function QuantityPanel({
     a.download = `${projectId}-${floorId}-boq.json`
     a.click()
     URL.revokeObjectURL(url)
-    toast.success('BOQ JSON export হয়েছে')
+    toast.success('BOQ JSON exported')
   }, [boq, projectId, floorId])
 
   // ── Update rate ───────────────────────────────────
@@ -152,7 +152,7 @@ export default function QuantityPanel({
             className="flex-1 py-2 rounded-lg flex items-center justify-center gap-1.5
                        text-xs font-display font-semibold text-text-inverse
                        disabled:opacity-60 transition-all hover:scale-[1.01]"
-            style={{ background: 'linear-gradient(135deg,#00B4D8,#0077A8)' }}
+            style={{ background: 'linear-gradient(135deg,#1a56db,#1e429f)' }}
           >
             {loading
               ? <><div className="spinner" style={{ width: 11, height: 11 }} /> Wait</>
@@ -213,9 +213,9 @@ export default function QuantityPanel({
         {!boq && (
           <div className="flex flex-col items-center justify-center h-full px-4 text-center py-8">
             <Building2 size={28} className="text-text-muted opacity-20 mb-3" />
-            <p className="text-xs text-text-muted font-bengali leading-relaxed">
-              BIM object আঁকুন তারপর Extract চাপুন।
-              Wall, Column, Door, Window, Room থেকে BOQ তৈরি হবে।
+            <p className="text-xs text-text-muted leading-relaxed">
+              Draw BIM objects, then click Extract.
+              BOQ is generated from Wall, Column, Door, Window, Room.
             </p>
           </div>
         )}
@@ -318,9 +318,9 @@ function SummaryView({ boq, totalAmount }: { boq: BOQData; totalAmount: number }
             Estimating App Integration
           </p>
         </div>
-        <p className="text-2xs text-text-muted font-bengali leading-relaxed">
-          "Save to Hub" করলে Estimating App এই BOQ data পাবে।
-          Rate দিলে amount auto calculate হবে।
+        <p className="text-2xs text-text-muted leading-relaxed">
+          "Save to Hub" makes this BOQ data available to the Estimating App.
+          Amount auto-calculates once you enter a rate.
         </p>
       </div>
     </div>

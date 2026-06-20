@@ -29,7 +29,7 @@ export async function fetchProjectData(
   // 1. Project base doc
   const projSnap = await getDoc(doc(db, 'projects', projectId))
   if (!projSnap.exists()) {
-    throw new Error(`Project "${projectId}" পাওয়া যায়নি`)
+    throw new Error(`Project "${projectId}" not found`)
   }
   const project = { id: projSnap.id, ...projSnap.data() } as HubProject
 

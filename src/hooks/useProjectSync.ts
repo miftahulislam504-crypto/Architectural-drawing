@@ -45,7 +45,7 @@ export function useProjectSync(projectId: string | undefined) {
     }
 
     setSyncState({
-      status: 'loading', message: 'Hub থেকে project data load হচ্ছে...',
+      status: 'loading', message: 'Loading project data from Hub...',
       loaded: { project: false, siteInfo: false, bnbcSettings: false, buildingInfo: false },
     })
 
@@ -94,7 +94,7 @@ export function useProjectSync(projectId: string | undefined) {
 
       setSyncState({
         status: 'success',
-        message: 'সব data load সম্পূর্ণ',
+        message: 'All data loaded',
         loaded: {
           project:      true,
           siteInfo:     !!data.siteInfo,
@@ -106,7 +106,7 @@ export function useProjectSync(projectId: string | undefined) {
     } catch (err: any) {
       setSyncState({
         status: 'error',
-        message: err?.message ?? 'Data load করতে সমস্যা হচ্ছে',
+        message: err?.message ?? 'Problem loading data',
         loaded: { project: false, siteInfo: false, bnbcSettings: false, buildingInfo: false },
       })
     }

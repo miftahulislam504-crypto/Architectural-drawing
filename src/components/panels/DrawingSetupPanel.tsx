@@ -48,7 +48,7 @@ export default function DrawingSetupPanel({ canvas }: DrawingSetupPanelProps) {
     const scale = 0.4   // px per mm — adjust for canvas size
     generateTitleBlock(canvas, data, scale)
     setShowTitleBlock(true)
-    toast.success('Title block যোগ হয়েছে')
+    toast.success('Title block added')
   }, [canvas, data])
 
   // ── Toggle title block visibility ─────────────────
@@ -63,7 +63,7 @@ export default function DrawingSetupPanel({ canvas }: DrawingSetupPanelProps) {
     tbs.forEach((o) => o.set({ visible: next }))
     canvas.renderAll()
     setShowTitleBlock(next)
-    toast.info(next ? 'Title block দেখানো হচ্ছে' : 'Title block লুকানো হয়েছে')
+    toast.info(next ? 'Title block shown' : 'Title block hidden')
   }, [canvas, showTitleBlock, applyTitleBlock])
 
   return (
@@ -232,13 +232,13 @@ export default function DrawingSetupPanel({ canvas }: DrawingSetupPanelProps) {
           className="w-full py-2.5 rounded-lg flex items-center justify-center gap-2
                      text-xs font-display font-semibold text-text-inverse transition-all
                      hover:scale-[1.02] active:scale-[0.98]"
-          style={{ background: 'linear-gradient(135deg,#00B4D8,#0077A8)' }}
+          style={{ background: 'linear-gradient(135deg,#1a56db,#1e429f)' }}
         >
           <FileText size={13} />
           Apply Title Block
         </button>
-        <p className="text-2xs text-text-muted text-center mt-1.5 font-bengali">
-          Drawing-এ A1 sheet border ও title block যোগ হবে
+        <p className="text-2xs text-text-muted text-center mt-1.5">
+          Adds an A1 sheet border and title block to the drawing
         </p>
       </div>
     </div>

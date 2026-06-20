@@ -114,9 +114,9 @@ function ToolBtn({ tool, active, onClick }: {
       style={{ height: '34px' }}>
       {active && (
         <div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-r"
-          style={{ background: tool.color ?? '#00B4D8' }} />
+          style={{ background: tool.color ?? '#1a56db' }} />
       )}
-      <span style={{ color: active ? (tool.color ?? '#00B4D8') : undefined }}>
+      <span style={{ color: active ? (tool.color ?? '#1a56db') : undefined }}>
         {tool.icon}
       </span>
       {tool.shortcut && (

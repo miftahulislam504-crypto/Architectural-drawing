@@ -27,7 +27,7 @@ export function useCADTools(canvas: fabric.Canvas | null) {
     if (!canvas) return null
     const objs = getSelectedObjects(canvas)
     if (objs.length < minCount) {
-      toast.warning(`কমপক্ষে ${minCount}টি object সিলেক্ট করুন`)
+      toast.warning(`Select at least ${minCount} object(s)`)
       return null
     }
     return fn(objs)
@@ -45,7 +45,7 @@ export function useCADTools(canvas: fabric.Canvas | null) {
   const copyOffset = useCallback(() => {
     withSelected((objs) => {
       objs.forEach((o) => copyObject(o, moveStep, moveStep, canvas!))
-      toast.success(`${objs.length}টি object copy হয়েছে`)
+      toast.success(`${objs.length} object(s) copied`)
     })
   }, [canvas, moveStep, withSelected])
 
@@ -80,7 +80,7 @@ export function useCADTools(canvas: fabric.Canvas | null) {
     const objs = getSelectedObjects(canvas)
     const lines = objs.filter((o) => o.type === 'line') as fabric.Line[]
     if (lines.length === 0) {
-      toast.warning('Line object সিলেক্ট করুন')
+      toast.warning('Select a line object')
       return
     }
     const d = dist ?? offsetDist
@@ -94,7 +94,7 @@ export function useCADTools(canvas: fabric.Canvas | null) {
       objs.forEach((o) =>
         arrayRectangular(o, arrayCols, arrayRows, arrayColGap, arrayRowGap, canvas!)
       )
-      toast.success(`${arrayCols}×${arrayRows} array তৈরি হয়েছে`)
+      toast.success(`${arrayCols}×${arrayRows} array created`)
     })
   }, [canvas, arrayCols, arrayRows, arrayColGap, arrayRowGap, withSelected])
 
@@ -103,14 +103,14 @@ export function useCADTools(canvas: fabric.Canvas | null) {
     if (!canvas) return
     const objs = getSelectedObjects(canvas)
     if (objs.length === 0) {
-      toast.warning('Object সিলেক্ট করুন')
+      toast.warning('Select an object')
       return
     }
     objs.forEach((obj) => {
       const bounds = obj.getBoundingRect()
       createHatch(bounds, pattern, color, spacing, canvas)
     })
-    toast.success(`Hatch pattern যোগ হয়েছে`)
+    toast.success(`Hatch pattern added`)
   }, [canvas])
 
   // ── Delete selected ────────────────────────────────
@@ -121,7 +121,7 @@ export function useCADTools(canvas: fabric.Canvas | null) {
     objs.forEach((o) => canvas.remove(o))
     canvas.discardActiveObject()
     canvas.renderAll()
-    toast.info(`${objs.length}টি object মুছে গেছে`)
+    toast.info(`${objs.length} object(s) deleted`)
   }, [canvas])
 
   // ── Select all ─────────────────────────────────────
@@ -129,14 +129,14 @@ export function useCADTools(canvas: fabric.Canvas | null) {
     if (!canvas) return
     selectAll(canvas)
     const n = getSelectedObjects(canvas).length
-    toast.info(`${n}টি object সিলেক্ট হয়েছে`)
+    toast.info(`${n} object(s) selected`)
   }, [canvas])
 
   // ── Duplicate in place ─────────────────────────────
   const duplicate = useCallback(() => {
     withSelected((objs) => {
       objs.forEach((o) => copyObject(o, 20, 20, canvas!))
-      toast.success(`${objs.length}টি object duplicate হয়েছে`)
+      toast.success(`${objs.length} object(s) duplicated`)
     })
   }, [canvas, withSelected])
 
@@ -169,26 +169,26 @@ export function useCADTools(canvas: fabric.Canvas | null) {
   const groupSelected = useCallback(() => {
     if (!canvas) return
     const objs = getSelectedObjects(canvas)
-    if (objs.length < 2) { toast.warning('২টির বেশি object সিলেক্ট করুন'); return }
+    if (objs.length < 2) { toast.warning('Select at least 2 objects'); return }
     const group = new fabric.Group(objs, { selectable: true })
     objs.forEach((o) => canvas.remove(o))
     canvas.add(group)
     canvas.setActiveObject(group)
     canvas.renderAll()
-    toast.success('Group তৈরি হয়েছে')
+    toast.success('Group created')
   }, [canvas])
 
   const ungroupSelected = useCallback(() => {
     if (!canvas) return
     const active = canvas.getActiveObject()
-    if (!active || active.type !== 'group') { toast.warning('Group সিলেক্ট করুন'); return }
+    if (!active || active.type !== 'group') { toast.warning('Select a group'); return }
     const grp  = active as fabric.Group
     const items = grp.getObjects()
     grp.destroy()
     canvas.remove(grp)
     items.forEach((o) => canvas.add(o))
     canvas.renderAll()
-    toast.success('Ungroup হয়েছে')
+    toast.success('Ungrouped')
   }, [canvas])
 
   return {

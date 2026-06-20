@@ -33,14 +33,14 @@ export default function AnnotationPanel({ canvas }: AnnotationPanelProps) {
     autoTagCanvas(canvas)
     setHasAutoTags(true)
     const count = canvas.getObjects().filter((o: any) => o.__autoTag).length
-    toast.success(`${count}টি auto-tag যোগ হয়েছে`)
+    toast.success(`${count} auto-tag(s) added`)
   }, [canvas])
 
   const handleClearTags = useCallback(() => {
     if (!canvas) return
     removeAutoTags(canvas)
     setHasAutoTags(false)
-    toast.info('সব auto-tag সরানো হয়েছে')
+    toast.info('All auto-tags removed')
   }, [canvas])
 
   // ── Add callout ───────────────────────────────────
@@ -55,7 +55,7 @@ export default function AnnotationPanel({ canvas }: AnnotationPanelProps) {
     canvas.add(box)
     canvas.setActiveObject(box)
     canvas.renderAll()
-    toast.success('Callout যোগ হয়েছে')
+    toast.success('Callout added')
   }, [canvas, callTitle, callBody])
 
   // ── Dimension chain ───────────────────────────────
@@ -68,7 +68,7 @@ export default function AnnotationPanel({ canvas }: AnnotationPanelProps) {
     // Parse points from selected objects
     const objs = canvas.getActiveObjects()
     if (objs.length < 2) {
-      toast.warning('কমপক্ষে ২টি object সিলেক্ট করুন')
+      toast.warning('Select at least 2 objects')
       return
     }
     const pts = objs.map((o) => {
@@ -77,7 +77,7 @@ export default function AnnotationPanel({ canvas }: AnnotationPanelProps) {
     }).sort((a, b) => dimDir === 'h' ? a.x - b.x : a.y - b.y)
 
     createDimChain(canvas, pts, dimOffset, dimDir === 'h')
-    toast.success(`Dimension chain (${objs.length - 1}টি) যোগ হয়েছে`)
+    toast.success(`Dimension chain (${objs.length - 1}) added`)
   }, [canvas, dimDir, dimOffset])
 
   // ── Manual tag helpers ────────────────────────────
@@ -89,7 +89,7 @@ export default function AnnotationPanel({ canvas }: AnnotationPanelProps) {
     canvas.add(tag)
     canvas.setActiveObject(tag)
     canvas.renderAll()
-    toast.success('Room tag যোগ হয়েছে')
+    toast.success('Room tag added')
   }, [canvas])
 
   const addManualDoorTag = useCallback(() => {
@@ -100,7 +100,7 @@ export default function AnnotationPanel({ canvas }: AnnotationPanelProps) {
     canvas.add(tag)
     canvas.setActiveObject(tag)
     canvas.renderAll()
-    toast.success('Door tag যোগ হয়েছে')
+    toast.success('Door tag added')
   }, [canvas])
 
   const addManualWindowTag = useCallback(() => {
@@ -111,7 +111,7 @@ export default function AnnotationPanel({ canvas }: AnnotationPanelProps) {
     canvas.add(tag)
     canvas.setActiveObject(tag)
     canvas.renderAll()
-    toast.success('Window tag যোগ হয়েছে')
+    toast.success('Window tag added')
   }, [canvas])
 
   const addManualColumnTag = useCallback(() => {
@@ -122,7 +122,7 @@ export default function AnnotationPanel({ canvas }: AnnotationPanelProps) {
     canvas.add(tag)
     canvas.setActiveObject(tag)
     canvas.renderAll()
-    toast.success('Column tag যোগ হয়েছে')
+    toast.success('Column tag added')
   }, [canvas])
 
   return (
@@ -136,15 +136,15 @@ export default function AnnotationPanel({ canvas }: AnnotationPanelProps) {
       />
       {autoOpen && (
         <div className="px-3 pb-3 flex flex-col gap-2">
-          <p className="text-2xs text-text-muted font-bengali leading-relaxed">
-            Canvas-এর সব BIM object-এ auto-tag যোগ হবে — Room, Door, Window, Column, Wall।
+          <p className="text-2xs text-text-muted leading-relaxed">
+            Adds an auto-tag to every BIM object on the canvas — Room, Door, Window, Column, Wall.
           </p>
           <button
             onClick={handleAutoTag}
             className="w-full py-2 rounded-lg flex items-center justify-center gap-2
                        text-xs font-display font-semibold text-text-inverse transition-all
                        hover:scale-[1.02] active:scale-[0.98]"
-            style={{ background: 'linear-gradient(135deg,#00B4D8,#0077A8)' }}
+            style={{ background: 'linear-gradient(135deg,#1a56db,#1e429f)' }}
           >
             <Zap size={13} />
             Auto-Tag All Objects
@@ -174,8 +174,8 @@ export default function AnnotationPanel({ canvas }: AnnotationPanelProps) {
       />
       {manualOpen && (
         <div className="px-2 pb-3">
-          <p className="text-2xs text-text-muted mb-2 px-1 font-bengali">
-            Click করলে canvas center-এ place হবে, drag করে সরাও
+          <p className="text-2xs text-text-muted mb-2 px-1">
+            Click to place at canvas center, then drag to reposition
           </p>
           <div className="grid grid-cols-2 gap-1">
             <TagBtn
@@ -212,8 +212,8 @@ export default function AnnotationPanel({ canvas }: AnnotationPanelProps) {
       />
       {dimOpen && (
         <div className="px-3 pb-3 flex flex-col gap-2">
-          <p className="text-2xs text-text-muted font-bengali leading-relaxed">
-            Objects সিলেক্ট করুন, তারপর chain dimension দিন।
+          <p className="text-2xs text-text-muted leading-relaxed">
+            Select objects, then add a chain dimension.
           </p>
 
           <div>

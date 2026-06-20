@@ -7,31 +7,36 @@ export default {
   theme: {
     extend: {
       colors: {
-        // CivilOS Dark CAD Theme
+        // CivilOS Unified Design System — canvas stays dark (CAD drawing area),
+        // UI chrome (panels/toolbar/header) is light per the unified system.
         canvas: {
           bg: '#0D0F12',
           grid: '#1A1D23',
           border: '#2A2D35',
         },
+        surface: {
+          DEFAULT: '#ffffff',
+          2: '#f9fafb',
+        },
         panel: {
-          bg: '#12151A',
-          hover: '#1E2128',
-          active: '#252930',
-          border: '#2A2D35',
+          bg: '#f9fafb',
+          hover: '#f3f4f6',
+          active: '#e8f0fe',
+          border: '#e5e7eb',
         },
         accent: {
-          primary: '#00B4D8',    // CAD cyan — main action color
-          secondary: '#0077A8',  // darker cyan
-          success: '#22C55E',
-          warning: '#F59E0B',
-          error: '#EF4444',
-          muted: '#64748B',
+          primary: '#1a56db',    // CivilOS unified primary blue
+          secondary: '#1e429f',  // primary dark
+          success: '#059669',
+          warning: '#d97706',
+          error: '#dc2626',
+          muted: '#6b7280',
         },
         text: {
-          primary: '#E8EAF0',
-          secondary: '#9CA3AF',
-          muted: '#6B7280',
-          inverse: '#0D0F12',
+          primary: '#111827',
+          secondary: '#374151',
+          muted: '#6b7280',
+          inverse: '#ffffff',
         },
         // BIM Object colors
         bim: {
@@ -46,10 +51,9 @@ export default {
         }
       },
       fontFamily: {
-        display: ['Rajdhani', 'sans-serif'],
-        body: ['DM Sans', 'sans-serif'],
+        display: ['Inter', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
-        bengali: ['Noto Sans Bengali', 'sans-serif'],
       },
       fontSize: {
         '2xs': '0.625rem',
@@ -63,9 +67,9 @@ export default {
         header: '44px',
       },
       boxShadow: {
-        panel: '0 0 0 1px rgba(0,180,216,0.1), 0 4px 24px rgba(0,0,0,0.4)',
-        tooltip: '0 2px 8px rgba(0,0,0,0.6)',
-        active: '0 0 0 2px rgba(0,180,216,0.5)',
+        panel: '0 1px 2px 0 rgba(0,0,0,0.04), 0 1px 3px 0 rgba(0,0,0,0.06)',
+        tooltip: '0 2px 8px rgba(0,0,0,0.25)',
+        active: '0 0 0 2px rgba(26,86,219,0.35)',
       },
       animation: {
         'fade-in': 'fadeIn 0.15s ease-out',

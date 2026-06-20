@@ -225,8 +225,8 @@ export default function CADToolsPanel({ hook }: CADToolsPanelProps) {
       <SectionHead label="Hatch" open={hatchOpen} onToggle={() => setHatchOpen(!hatchOpen)} />
       {hatchOpen && (
         <div className="px-2 pb-2">
-          <p className="text-2xs text-text-muted mb-2 font-bengali px-1">
-            Object select করে pattern চাপুন
+          <p className="text-2xs text-text-muted mb-2 px-1">
+            Select an object, then click pattern
           </p>
           <div className="grid grid-cols-2 gap-1">
             {HATCH_PRESETS.map((h) => (

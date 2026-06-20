@@ -51,13 +51,13 @@ export default function BNBCPanel({ canvas, projectId }: BNBCPanelProps) {
       setReport(result)
       toast.success(
         result.failed > 0
-          ? `${result.failed}টি fail — সমাধান প্রয়োজন`
+          ? `${result.failed} failed — needs resolution`
           : result.warnings > 0
-          ? `${result.warnings}টি warning — review করুন`
-          : 'সব check pass হয়েছে ✓'
+          ? `${result.warnings} warning(s) — please review`
+          : 'All checks passed ✓'
       )
     } catch {
-      toast.error('Check করতে সমস্যা হয়েছে')
+      toast.error('There was a problem running the check')
     } finally {
       setLoading(false)
     }
@@ -72,9 +72,9 @@ export default function BNBCPanel({ canvas, projectId }: BNBCPanelProps) {
         doc(db, `projects/${projectId}/bnbcReport/data`),
         { ...report, savedAt: serverTimestamp() }
       )
-      toast.success('BNBC report save হয়েছে')
+      toast.success('BNBC report saved')
     } catch {
-      toast.error('Save করতে সমস্যা')
+      toast.error('Problem saving')
     } finally {
       setSaving(false)
     }
@@ -93,7 +93,7 @@ export default function BNBCPanel({ canvas, projectId }: BNBCPanelProps) {
     a.download = `${projectId}-bnbc-report.json`
     a.click()
     URL.revokeObjectURL(url)
-    toast.success('BNBC report export হয়েছে')
+    toast.success('BNBC report exported')
   }, [report, projectId])
 
   // ── Filter results ─────────────────────────────────
@@ -116,9 +116,9 @@ export default function BNBCPanel({ canvas, projectId }: BNBCPanelProps) {
           <div className="flex items-start gap-1.5 bg-accent-warning/10
                           border border-accent-warning/30 rounded px-2 py-1.5">
             <AlertTriangle size={11} className="text-accent-warning shrink-0 mt-0.5" />
-            <p className="text-2xs text-text-muted font-bengali leading-relaxed">
-              Hub-এ Site Info, BNBC Settings ও Building Info সেট করলে
-              আরও accurate check হবে।
+            <p className="text-2xs text-text-muted leading-relaxed">
+              Set Site Info, BNBC Settings, and Building Info in Hub
+              for a more accurate check.
             </p>
           </div>
         )}
@@ -129,7 +129,7 @@ export default function BNBCPanel({ canvas, projectId }: BNBCPanelProps) {
           className="w-full py-2 rounded-lg flex items-center justify-center gap-2
                      text-xs font-display font-semibold text-text-inverse
                      disabled:opacity-60 transition-all hover:scale-[1.01]"
-          style={{ background: 'linear-gradient(135deg,#00B4D8,#0077A8)' }}
+          style={{ background: 'linear-gradient(135deg,#1a56db,#1e429f)' }}
         >
           {loading
             ? <><div className="spinner" style={{ width: 11, height: 11 }} /> Checking...</>
@@ -160,9 +160,9 @@ export default function BNBCPanel({ canvas, projectId }: BNBCPanelProps) {
       {!report && (
         <div className="flex flex-col items-center justify-center flex-1 px-4 text-center">
           <ShieldCheck size={32} className="text-text-muted opacity-20 mb-3" />
-          <p className="text-xs text-text-muted font-bengali leading-relaxed">
-            Drawing-এ BIM object আঁকুন, তারপর BNBC Check চালান।
-            Setback, FAR, Stair, Fire Exit, Parking সব check হবে।
+          <p className="text-xs text-text-muted leading-relaxed">
+            Draw BIM objects on the drawing, then run a BNBC Check.
+            Setback, FAR, Stair, Fire Exit, Parking — all will be checked.
           </p>
         </div>
       )}
@@ -247,7 +247,7 @@ function DashboardView({ report }: { report: ComplianceReport }) {
         <p className="text-xs font-display font-semibold text-text-primary mb-0.5">
           Compliance Score
         </p>
-        <p className="text-2xs text-text-muted font-bengali">
+        <p className="text-2xs text-text-muted">
           {report.summary}
         </p>
       </div>
@@ -363,7 +363,7 @@ function ListView({
       <div className="flex-1 overflow-auto">
         {results.length === 0 && (
           <div className="text-center py-8">
-            <p className="text-xs text-text-muted">কোনো result নেই এই filter-এ</p>
+            <p className="text-xs text-text-muted">No results for this filter</p>
           </div>
         )}
         {results.map((result) => (
@@ -453,7 +453,7 @@ function IssueRow({
               <p className="text-2xs font-mono text-text-secondary">{result.required}</p>
             </div>
           </div>
-          <p className="text-2xs text-text-muted mb-1 font-bengali leading-relaxed">
+          <p className="text-2xs text-text-muted mb-1 leading-relaxed">
             {result.remarks}
           </p>
           <div className="flex items-center justify-between">

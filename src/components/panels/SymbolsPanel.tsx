@@ -17,9 +17,9 @@ const SYMBOLS: Array<{
   {
     type:  'north_arrow',
     label: 'North Arrow',
-    desc:  'উত্তর দিক চিহ্ন',
+    desc:  'North direction marker',
     icon:  <Compass size={18} />,
-    color: '#E8EAF0',
+    color: '#475569',
   },
   {
     type:  'level_marker',
@@ -71,8 +71,8 @@ export default function SymbolsPanel({ onSelectSymbol, activeSymbol }: SymbolsPa
 
       {/* Header info */}
       <div className="px-3 py-2 border-b border-panel-border">
-        <p className="text-2xs text-text-muted font-bengali leading-relaxed">
-          Symbol সিলেক্ট করুন, তারপর canvas-এ click করুন
+        <p className="text-2xs text-text-muted leading-relaxed">
+          Select a symbol, then click on the canvas
         </p>
       </div>
 
@@ -95,7 +95,7 @@ export default function SymbolsPanel({ onSelectSymbol, activeSymbol }: SymbolsPa
             <span className="text-2xs font-display font-semibold text-text-primary leading-tight">
               {sym.label}
             </span>
-            <span className="text-2xs text-text-muted leading-tight font-bengali">
+            <span className="text-2xs text-text-muted leading-tight">
               {sym.desc}
             </span>
           </button>
@@ -107,8 +107,8 @@ export default function SymbolsPanel({ onSelectSymbol, activeSymbol }: SymbolsPa
         <p className="text-2xs text-text-muted font-mono">
           Selected: {activeSymbol ?? '—'}
         </p>
-        <p className="text-2xs text-text-muted mt-0.5 font-bengali">
-          Click canvas-এ place করতে
+        <p className="text-2xs text-text-muted mt-0.5">
+          Click canvas to place
         </p>
       </div>
     </div>

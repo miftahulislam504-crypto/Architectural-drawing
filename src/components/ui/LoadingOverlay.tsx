@@ -39,7 +39,7 @@ export default function LoadingOverlay({ syncState, onRetry }: LoadingOverlayPro
           {status === 'error' && (
             <XCircle size={14} className="text-accent-error shrink-0" />
           )}
-          <p className="text-xs text-text-secondary font-bengali leading-snug">
+          <p className="text-xs text-text-secondary leading-snug">
             {message}
           </p>
         </div>
@@ -79,15 +79,15 @@ export default function LoadingOverlay({ syncState, onRetry }: LoadingOverlayPro
                        hover:bg-accent-primary/10 transition-colors"
           >
             <RefreshCw size={12} />
-            আবার চেষ্টা করুন
+            Try Again
           </button>
         )}
 
         {/* Hint — missing data */}
         {status === 'success' && (!loaded.siteInfo || !loaded.bnbcSettings) && (
-          <p className="text-2xs text-text-muted text-center font-bengali leading-relaxed">
-            Hub-এ Site Info বা BNBC Settings না থাকলে
-            drawing করা যাবে, তবে compliance check কাজ করবে না।
+          <p className="text-2xs text-text-muted text-center leading-relaxed">
+            Drawing is still possible without Site Info or BNBC Settings in Hub,
+            but compliance checks won't work.
           </p>
         )}
       </div>

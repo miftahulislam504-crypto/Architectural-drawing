@@ -116,7 +116,7 @@ export async function exportToPDF(
   // Open print window
   const win = window.open('', '_blank')
   if (!win) {
-    alert('Popup blocked — browser-এর popup allow করুন')
+    alert('Popup blocked — please allow popups for this site')
     return
   }
 

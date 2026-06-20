@@ -8,12 +8,12 @@ export default function EmptyCanvasHint() {
   const { setActiveTool } = useAppStore()
 
   const steps = [
-    { icon: <Grid3x3  size={14} />, key: 'grid' as const,   label: '1. Grid আঁকুন',    color: '#1E6A9A' },
-    { icon: <Columns  size={14} />, key: 'column' as const, label: '2. Column বসান',   color: '#EF4444' },
-    { icon: <Minus    size={14} />, key: 'wall' as const,   label: '3. Wall আঁকুন',    color: '#64748B' },
-    { icon: <DoorOpen size={14} />, key: 'door' as const,   label: '4. Door বসান',     color: '#F59E0B' },
-    { icon: <AppWindow size={14}/>, key: 'window' as const, label: '5. Window বসান',   color: '#00B4D8' },
-    { icon: <Square   size={14} />, key: 'room' as const,   label: '6. Room tag করুন', color: '#10B981' },
+    { icon: <Grid3x3  size={14} />, key: 'grid' as const,   label: '1. Draw Grid',   color: '#1E6A9A' },
+    { icon: <Columns  size={14} />, key: 'column' as const, label: '2. Place Column', color: '#EF4444' },
+    { icon: <Minus    size={14} />, key: 'wall' as const,   label: '3. Draw Wall',   color: '#64748B' },
+    { icon: <DoorOpen size={14} />, key: 'door' as const,   label: '4. Place Door',  color: '#F59E0B' },
+    { icon: <AppWindow size={14}/>, key: 'window' as const, label: '5. Place Window', color: '#00B4D8' },
+    { icon: <Square   size={14} />, key: 'room' as const,   label: '6. Tag Room',    color: '#10B981' },
   ]
 
   return (
@@ -25,10 +25,10 @@ export default function EmptyCanvasHint() {
       >
         {/* Title */}
         <p className="text-xs font-display font-bold text-text-primary text-center mb-1">
-          শুরু করুন
+          Get Started
         </p>
-        <p className="text-2xs text-text-muted text-center mb-4 font-bengali">
-          নিচের order-এ কাজ করুন
+        <p className="text-2xs text-text-muted text-center mb-4">
+          Work through the steps below in order
         </p>
 
         {/* Steps */}

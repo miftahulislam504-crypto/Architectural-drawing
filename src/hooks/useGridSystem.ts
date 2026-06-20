@@ -69,7 +69,7 @@ export function useGridSystem(
     setSystem(newSystem)
     setHasGrid(true)
     rerender(newSystem, settings)
-    toast.success(`${cols}×${rows} structural grid তৈরি হয়েছে`)
+    toast.success(`${cols}×${rows} structural grid created`)
   }, [canvas, settings, rerender])
 
   // ── Add single line ───────────────────────────────
@@ -222,7 +222,7 @@ export function useGridSystem(
       )
       toast.success('Grid saved ✓')
     } catch {
-      toast.error('Grid save করতে সমস্যা')
+      toast.error('Problem saving grid')
     } finally {
       setSaving(false)
     }
@@ -256,7 +256,7 @@ export function useGridSystem(
     columnGridRefs?: string[]
   ) => {
     if (!projectId || !hasGrid) {
-      toast.error('আগে grid তৈরি করুন')
+      toast.error('Create a grid first')
       return
     }
     try {
@@ -283,9 +283,9 @@ export function useGridSystem(
       a.click()
       URL.revokeObjectURL(url)
 
-      toast.success('Structural App-এ Grid export হয়েছে ✓')
+      toast.success('Grid exported to Structural App ✓')
     } catch {
-      toast.error('Export করতে সমস্যা হয়েছে')
+      toast.error('Problem exporting')
     }
   }, [projectId, hasGrid, system])
 

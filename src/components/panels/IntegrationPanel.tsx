@@ -76,7 +76,7 @@ export default function IntegrationPanel({
       const s = await checkIntegrationStatus(projectId)
       setStatus(s)
     } catch {
-      toast.error('Status check করতে সমস্যা')
+      toast.error('Problem checking status')
     } finally {
       setChecking(false)
     }
@@ -90,7 +90,7 @@ export default function IntegrationPanel({
     setProgress('Data preparing...')
 
     try {
-      setProgress('BOQ ও Schedule extract করছে...')
+      setProgress('Extracting BOQ and Schedule...')
       const payload = await buildPayload(
         canvas, projectId, floors,
         activeFloorId ?? 'gf',
@@ -98,7 +98,7 @@ export default function IntegrationPanel({
         null
       )
 
-      setProgress('Firestore-এ push করছে...')
+      setProgress('Pushing to Firestore...')
       const res = await pushToAllApps(payload, projectId)
       setResults(res)
 
@@ -106,16 +106,16 @@ export default function IntegrationPanel({
       const success = res.filter((r) => r.success).length
 
       if (failed === 0) {
-        toast.success(`সব ${success}টি App-এ data push হয়েছে ✓`)
+        toast.success(`Data pushed to all ${success} app(s) ✓`)
       } else {
-        toast.warning(`${success}টি success, ${failed}টি failed`)
+        toast.warning(`${success} succeeded, ${failed} failed`)
       }
 
       // Refresh status
       await handleCheckStatus()
 
     } catch (e: any) {
-      toast.error('Push করতে সমস্যা হয়েছে')
+      toast.error('Problem pushing data')
     } finally {
       setPushing(false)
       setProgress('')
@@ -136,9 +136,9 @@ export default function IntegrationPanel({
             Integration Bridge
           </p>
         </div>
-        <p className="text-2xs text-text-muted font-bengali leading-relaxed">
-          Architectural drawing-এর সব data একটা বাটনে
-          সব CivilOS App-এ পৌঁছে যাবে।
+        <p className="text-2xs text-text-muted leading-relaxed">
+          One button sends all Architectural drawing data
+          to every CivilOS App.
         </p>
       </div>
 
@@ -149,7 +149,7 @@ export default function IntegrationPanel({
           <PipelineStep
             label="Architectural Drawing"
             sublabel={`${activeFloor?.name ?? '—'} · Current floor`}
-            color="#00B4D8"
+            color="#1a56db"
             isSource
           />
           <div className="flex justify-center">
@@ -181,8 +181,8 @@ export default function IntegrationPanel({
           className="w-full py-3 rounded-xl flex items-center justify-center gap-2
                      text-sm font-display font-bold text-text-inverse
                      disabled:opacity-60 transition-all hover:scale-[1.01]"
-          style={{ background: 'linear-gradient(135deg,#00B4D8,#0077A8)',
-                   boxShadow: pushing ? 'none' : '0 0 24px rgba(0,180,216,0.35)' }}
+          style={{ background: 'linear-gradient(135deg,#1a56db,#1e429f)',
+                   boxShadow: pushing ? 'none' : '0 4px 14px rgba(26,86,219,0.3)' }}
         >
           {pushing ? (
             <><Loader2 size={16} className="animate-spin" /> Pushing...</>

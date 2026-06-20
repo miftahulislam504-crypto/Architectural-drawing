@@ -121,7 +121,7 @@ export default function GridPanel({ hook }: GridPanelProps) {
             className="w-full py-2 rounded-lg flex items-center justify-center gap-2
                        text-xs font-display font-semibold text-text-inverse transition-all
                        hover:scale-[1.02] active:scale-[0.98]"
-            style={{ background: 'linear-gradient(135deg,#00B4D8,#0077A8)' }}
+            style={{ background: 'linear-gradient(135deg,#1a56db,#1e429f)' }}
           >
             <Zap size={13} />
             Generate Grid
@@ -267,8 +267,8 @@ export default function GridPanel({ hook }: GridPanelProps) {
 
           {/* ── Export ────────────────────────────── */}
           <div className="px-3 py-3">
-            <p className="text-2xs text-text-muted mb-2 font-bengali">
-              Structural App-এ এই grid data পাঠাবে
+            <p className="text-2xs text-text-muted mb-2">
+              Sends this grid data to the Structural App
             </p>
             <button
               onClick={() => exportToStructural()}
@@ -291,9 +291,9 @@ export default function GridPanel({ hook }: GridPanelProps) {
       {!hasGrid && (
         <div className="flex-1 flex flex-col items-center justify-center px-4 text-center py-8">
           <Grid3x3 size={28} className="text-text-muted opacity-20 mb-3" />
-          <p className="text-xs text-text-muted font-bengali leading-relaxed">
-            উপরে Generate করুন অথবা
-            Canvas-এ G key চেপে grid line যোগ করুন
+          <p className="text-xs text-text-muted leading-relaxed">
+            Click Generate above, or
+            press the G key on the canvas to add grid lines
           </p>
         </div>
       )}

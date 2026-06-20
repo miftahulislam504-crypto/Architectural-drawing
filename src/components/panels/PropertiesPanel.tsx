@@ -181,8 +181,8 @@ export default function PropertiesPanel({ canvas }: PropsPanelProps) {
           )}
 
           {!siteInfo && !bnbcSettings && !buildingInfo && (
-            <p className="text-2xs text-text-muted text-center py-2 font-bengali">
-              Hub থেকে Project data load হলে এখানে দেখাবে
+            <p className="text-2xs text-text-muted text-center py-2">
+              Project data from Hub will appear here once loaded
             </p>
           )}
         </div>

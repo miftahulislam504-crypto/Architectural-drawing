@@ -55,9 +55,9 @@ export default function ObjectProperties({ canvas }: ObjectPropertiesProps) {
     return (
       <div className="px-3 py-6 text-center">
         <Settings2 size={20} className="text-text-muted mx-auto mb-2 opacity-30" />
-        <p className="text-2xs text-text-muted font-bengali leading-relaxed">
-          কোনো object সিলেক্ট করুন
-          properties দেখতে
+        <p className="text-2xs text-text-muted leading-relaxed">
+          Select an object to
+          view its properties
         </p>
       </div>
     )

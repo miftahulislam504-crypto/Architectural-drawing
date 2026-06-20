@@ -14,8 +14,8 @@ export default function ProjectInfoPanel() {
 
   if (!hubProject) return (
     <div className="p-4 text-center">
-      <p className="text-text-muted text-xs font-bengali">
-        কোনো project load হয়নি
+      <p className="text-text-muted text-xs">
+        No project loaded
       </p>
     </div>
   )
@@ -69,7 +69,7 @@ export default function ProjectInfoPanel() {
               )}
             </div>
           ) : (
-            <MissingHint text="Hub-এ Site Info যোগ করুন" />
+            <MissingHint text="Add Site Info in Hub" />
           )}
         </div>
       )}
@@ -96,7 +96,7 @@ export default function ProjectInfoPanel() {
               <KV label="Wind Speed"     value={`${bnbcSettings.basicWindSpeed ?? '—'} m/s`} />
             </div>
           ) : (
-            <MissingHint text="Hub-এ BNBC Settings যোগ করুন" />
+            <MissingHint text="Add BNBC Settings in Hub" />
           )}
         </div>
       )}
@@ -122,7 +122,7 @@ export default function ProjectInfoPanel() {
               <KV label="Basement"      value={`${buildingInfo.basementCount ?? 0} nos`} />
             </div>
           ) : (
-            <MissingHint text="Hub-এ Building Info যোগ করুন" />
+            <MissingHint text="Add Building Info in Hub" />
           )}
         </div>
       )}
@@ -151,7 +151,7 @@ function MissingHint({ text }: { text: string }) {
     <div className="flex items-center gap-1.5 mt-2 py-1.5 px-2
                     bg-accent-warning/5 border border-accent-warning/20 rounded">
       <AlertTriangle size={11} className="text-accent-warning shrink-0" />
-      <p className="text-2xs text-text-muted font-bengali">{text}</p>
+      <p className="text-2xs text-text-muted">{text}</p>
     </div>
   )
 }

@@ -26,7 +26,7 @@ export default function ProjectSelectPage() {
     const auth = getAuth()
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        setError('লগইন করুন। Hub-এ login করা থাকতে হবে।')
+        setError('Please log in. You must be logged in to Hub.')
         setLoading(false)
         return
       }
@@ -46,7 +46,7 @@ export default function ProjectSelectPage() {
         setFiltered(data)
       } catch (err) {
         console.error(err)
-        setError('Firebase connect করতে পারছে না। Vercel-এ env variables চেক করুন।')
+        setError('Could not connect to Firebase. Check the env variables on Vercel.')
       } finally {
         setLoading(false)
       }
@@ -87,9 +87,9 @@ export default function ProjectSelectPage() {
   }
 
   const statusLabel = (s: string) => {
-    if (s === 'active')    return 'চলমান'
-    if (s === 'on_hold')   return 'বিরতি'
-    if (s === 'completed') return 'সম্পন্ন'
+    if (s === 'active')    return 'Active'
+    if (s === 'on_hold')   return 'On Hold'
+    if (s === 'completed') return 'Completed'
     return s
   }
 
@@ -98,14 +98,14 @@ export default function ProjectSelectPage() {
     if (!val) return ''
     try {
       const d = val?.toDate ? val.toDate() : new Date(val)
-      return d.toLocaleDateString('bn-BD')
+      return d.toLocaleDateString('en-GB')
     } catch {
       return ''
     }
   }
 
   return (
-    <div className="min-h-screen bg-canvas-bg flex flex-col">
+    <div className="min-h-screen bg-surface flex flex-col">
 
       {/* Header */}
       <div className="bg-panel-bg border-b border-panel-border px-4 py-3 flex items-center gap-3">
@@ -114,8 +114,8 @@ export default function ProjectSelectPage() {
           <h1 className="font-display font-semibold text-text-primary text-sm">
             Project Select
           </h1>
-          <p className="text-2xs text-text-muted font-bengali">
-            Hub থেকে প্রজেক্ট সিলেক্ট করুন
+          <p className="text-2xs text-text-muted">
+            Select a project from Hub
           </p>
         </div>
       </div>
@@ -126,7 +126,7 @@ export default function ProjectSelectPage() {
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
           <input
             className="cad-input pl-8"
-            placeholder="প্রজেক্ট নাম, কোড বা ক্লায়েন্ট খুঁজুন..."
+            placeholder="Search by project name, code or client..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -139,7 +139,7 @@ export default function ProjectSelectPage() {
         {loading && (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <div className="spinner" />
-            <p className="text-text-muted text-xs">Hub থেকে লোড হচ্ছে...</p>
+            <p className="text-text-muted text-xs">Loading from Hub...</p>
           </div>
         )}
 
@@ -153,9 +153,9 @@ export default function ProjectSelectPage() {
         {!loading && !error && filtered.length === 0 && (
           <div className="text-center py-16">
             <FolderOpen size={32} className="text-text-muted mx-auto mb-3" />
-            <p className="text-text-secondary text-sm mb-1">কোনো প্রজেক্ট নেই</p>
-            <p className="text-text-muted text-xs font-bengali">
-              Hub-এ নতুন প্রজেক্ট তৈরি করুন
+            <p className="text-text-secondary text-sm mb-1">No projects yet</p>
+            <p className="text-text-muted text-xs">
+              Create a new project in Hub
             </p>
           </div>
         )}

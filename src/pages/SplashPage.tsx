@@ -12,15 +12,15 @@ export default function SplashPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-canvas-bg flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-surface flex flex-col items-center justify-center p-6 relative overflow-hidden">
 
       {/* Background grid pattern */}
       <div
-        className="absolute inset-0 opacity-[0.04]"
+        className="absolute inset-0 opacity-[0.05]"
         style={{
           backgroundImage: `
-            linear-gradient(#00B4D8 1px, transparent 1px),
-            linear-gradient(90deg, #00B4D8 1px, transparent 1px)
+            linear-gradient(#1a56db 1px, transparent 1px),
+            linear-gradient(90deg, #1a56db 1px, transparent 1px)
           `,
           backgroundSize: '40px 40px',
         }}
@@ -29,7 +29,7 @@ export default function SplashPage() {
       {/* Glow */}
       <div
         className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full opacity-10 blur-3xl"
-        style={{ background: 'radial-gradient(circle, #00B4D8, transparent)' }}
+        style={{ background: 'radial-gradient(circle, #1a56db, transparent)' }}
       />
 
       {/* Content */}
@@ -38,7 +38,7 @@ export default function SplashPage() {
         {/* Logo mark */}
         <div className="flex items-center justify-center mb-6">
           <div className="w-16 h-16 rounded-2xl flex items-center justify-center border border-accent-primary/30 bg-panel-bg"
-            style={{ boxShadow: '0 0 32px rgba(0,180,216,0.2)' }}>
+            style={{ boxShadow: '0 4px 20px rgba(26,86,219,0.15)' }}>
             <Cpu size={32} className="text-accent-primary" />
           </div>
         </div>
@@ -54,15 +54,15 @@ export default function SplashPage() {
           Architectural
         </h1>
         <h2 className="font-display font-bold mb-4"
-          style={{ fontSize: '2rem', lineHeight: 1.1, color: '#00B4D8' }}>
+          style={{ fontSize: '2rem', lineHeight: 1.1, color: '#1a56db' }}>
           Drawing App
         </h2>
 
         <p className="text-text-secondary text-sm mb-2">
           Professional BIM-based architectural design platform
         </p>
-        <p className="text-text-muted text-xs mb-8 font-bengali">
-          BNBC 2020 অনুযায়ী পেশাদার আর্কিটেকচারাল ড্রয়িং সফটওয়্যার
+        <p className="text-text-muted text-xs mb-8">
+          Professional architectural drawing software per BNBC 2020
         </p>
 
         {/* Features */}
@@ -81,16 +81,16 @@ export default function SplashPage() {
           onClick={() => navigate('/projects')}
           className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-display font-semibold text-text-inverse transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           style={{
-            background: 'linear-gradient(135deg, #00B4D8, #0077A8)',
-            boxShadow: '0 0 24px rgba(0,180,216,0.35)',
+            background: 'linear-gradient(135deg, #1a56db, #1e429f)',
+            boxShadow: '0 6px 20px rgba(26,86,219,0.3)',
           }}
         >
-          <span>প্রজেক্ট খুলুন</span>
+          <span>Open Project</span>
           <ArrowRight size={18} />
         </button>
 
         <p className="text-text-muted text-2xs mt-4 font-mono">
-          Hub থেকে Project import করুন
+          Import a project from Hub
         </p>
       </div>
 

@@ -56,16 +56,16 @@ export default function SchedulePanel({
         result.summary.totalRooms +
         result.summary.totalColumns
 
-      toast.success(`${total}টি object থেকে schedule তৈরি হয়েছে`)
+      toast.success(`Schedule generated from ${total} object(s)`)
       setActiveTab('summary')
     } catch (err) {
-      toast.error('Schedule extract করতে সমস্যা হয়েছে')
+      toast.error('Problem extracting schedule')
     } finally {
       setLoading(false)
     }
   }, [canvas, floorId])
 
-  // ── Save to Firestore (Estimating App পড়বে) ───────
+  // ── Save to Firestore (read by Estimating App) ───────
   const handleSaveToFirestore = useCallback(async () => {
     if (!schedule || !projectId) return
     setSaving(true)
@@ -79,9 +79,9 @@ export default function SchedulePanel({
           floorId,
         }
       )
-      toast.success('Schedule Firestore-এ save হয়েছে — Estimating App পড়তে পারবে ✓')
+      toast.success('Schedule saved to Firestore — Estimating App can now read it ✓')
     } catch {
-      toast.error('Save করতে সমস্যা হয়েছে')
+      toast.error('Problem saving')
     } finally {
       setSaving(false)
     }
@@ -98,7 +98,7 @@ export default function SchedulePanel({
     a.download = `${projectId}-${floorId}-${type}-schedule.csv`
     a.click()
     URL.revokeObjectURL(url)
-    toast.success(`${type} schedule CSV download হয়েছে`)
+    toast.success(`${type} schedule CSV downloaded`)
   }, [schedule, projectId, floorId])
 
   // ── Export all JSON ────────────────────────────────
@@ -112,7 +112,7 @@ export default function SchedulePanel({
     a.download = `${projectId}-${floorId}-schedules.json`
     a.click()
     URL.revokeObjectURL(url)
-    toast.success('Full schedule JSON export হয়েছে')
+    toast.success('Full schedule JSON exported')
   }, [schedule, projectId, floorId])
 
   // ── Edit remark ────────────────────────────────────
@@ -146,7 +146,7 @@ export default function SchedulePanel({
           className="w-full py-2 rounded-lg flex items-center justify-center gap-2
                      text-xs font-display font-semibold text-text-inverse transition-all
                      disabled:opacity-60 hover:scale-[1.01] active:scale-[0.99]"
-          style={{ background: 'linear-gradient(135deg,#00B4D8,#0077A8)' }}
+          style={{ background: 'linear-gradient(135deg,#1a56db,#1e429f)' }}
         >
           {loading
             ? <><div className="spinner" style={{ width: 12, height: 12 }} /> Extracting...</>
@@ -212,8 +212,8 @@ export default function SchedulePanel({
         {!schedule && (
           <div className="flex flex-col items-center justify-center h-full px-4 text-center py-8">
             <BarChart2 size={28} className="text-text-muted opacity-20 mb-3" />
-            <p className="text-xs text-text-muted font-bengali leading-relaxed">
-              Drawing-এ BIM object আঁকুন তারপর "Extract Schedules" চাপুন
+            <p className="text-xs text-text-muted leading-relaxed">
+              Draw BIM objects, then click "Extract Schedules"
             </p>
           </div>
         )}
@@ -342,7 +342,7 @@ function SummaryTab({ schedule }: { schedule: FullSchedule }) {
             </div>
           ))}
           {schedule.rooms.length === 0 && (
-            <p className="text-2xs text-text-muted font-bengali">Room object নেই</p>
+            <p className="text-2xs text-text-muted">No room objects</p>
           )}
         </div>
         {schedule.rooms.length > 0 && (
@@ -679,11 +679,11 @@ function Td({ children, accent, mono, bold, center }: {
 function EmptyState({ label }: { label: string }) {
   return (
     <div className="flex flex-col items-center justify-center h-32 text-center px-4">
-      <p className="text-xs text-text-muted font-bengali">
-        কোনো {label} object নেই
+      <p className="text-xs text-text-muted">
+        No {label} objects
       </p>
       <p className="text-2xs text-text-muted mt-1">
-        Drawing-এ {label} আঁকুন তারপর re-extract করুন
+        Draw {label} in the drawing, then re-extract
       </p>
     </div>
   )

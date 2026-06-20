@@ -54,9 +54,9 @@ export default function ExportPanel({ canvas, projectId }: ExportPanelProps) {
         canvas, options, titleData,
         activeFloor?.name, hubProject?.name
       )
-      toast.success('PDF print dialog খুলেছে')
+      toast.success('PDF print dialog opened')
     } catch {
-      toast.error('PDF export করতে সমস্যা')
+      toast.error('Problem exporting PDF')
     } finally {
       setExporting(null)
     }
@@ -71,9 +71,9 @@ export default function ExportPanel({ canvas, projectId }: ExportPanelProps) {
         hubProject?.name ?? 'project',
         activeFloor?.name ?? 'floor'
       )
-      toast.success('PNG download হয়েছে')
+      toast.success('PNG downloaded')
     } catch {
-      toast.error('PNG export করতে সমস্যা')
+      toast.error('Problem exporting PNG')
     } finally {
       setExporting(null)
     }
@@ -88,9 +88,9 @@ export default function ExportPanel({ canvas, projectId }: ExportPanelProps) {
         hubProject?.name ?? 'project',
         activeFloor?.name ?? 'floor'
       )
-      toast.success('SVG download হয়েছে')
+      toast.success('SVG downloaded')
     } catch {
-      toast.error('SVG export করতে সমস্যা')
+      toast.error('Problem exporting SVG')
     } finally {
       setExporting(null)
     }
@@ -263,7 +263,7 @@ export default function ExportPanel({ canvas, projectId }: ExportPanelProps) {
           icon={<Printer size={14} />}
           label="PDF / Print"
           sublabel={`${options.sheetSize} ${options.orientation} · ${options.scale}`}
-          color="#00B4D8"
+          color="#1a56db"
           loading={exporting === 'pdf'}
           onClick={handlePDF}
         />
@@ -288,8 +288,8 @@ export default function ExportPanel({ canvas, projectId }: ExportPanelProps) {
           onClick={handleSVG}
         />
 
-        <p className="text-2xs text-text-muted font-bengali text-center mt-1 leading-relaxed">
-          PDF-এ print dialog খুলবে — "Save as PDF" সিলেক্ট করুন
+        <p className="text-2xs text-text-muted text-center mt-1 leading-relaxed">
+          A print dialog will open for PDF — select "Save as PDF"
         </p>
       </div>
 
