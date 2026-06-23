@@ -156,7 +156,7 @@ export default function PropertiesPanel({ canvas }: PropsPanelProps) {
           {siteInfo && (
             <>
               <InfoRow label="Plot Area"  value={`${siteInfo.plotArea} m²`} />
-              <InfoRow label="Plot"       value={`${siteInfo.plotWidth}×${siteInfo.plotDepth}m`} />
+              <InfoRow label="Plot Area"  value={`${siteInfo.plotArea ?? '—'} m²`} />
               <InfoRow label="Road"       value={`${siteInfo.roadWidth}m wide`} />
               <InfoRow label="Soil"       value={`BNBC ${siteInfo.soilType}`} />
             </>
@@ -175,7 +175,7 @@ export default function PropertiesPanel({ canvas }: PropsPanelProps) {
             <>
               <div className="divider" />
               <InfoRow label="Type"    value={buildingInfo.buildingType} />
-              <InfoRow label="Floors"  value={`${buildingInfo.totalFloors}F`} />
+              <InfoRow label="Floors"  value={`${buildingInfo.numFloors}F`} />
               <InfoRow label="Height"  value={`${buildingInfo.totalHeight}m`} />
             </>
           )}

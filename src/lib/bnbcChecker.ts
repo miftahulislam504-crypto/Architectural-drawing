@@ -265,13 +265,14 @@ function checkSetbacks(
   data:     CanvasData
 ): CheckResult[] {
   const rule = SETBACK_RULES.find(
-    (r) => site.roadWidth >= r.roadWidthMin && site.roadWidth < r.roadWidthMax
+    (r) => (site.roadWidth ?? 0) >= r.roadWidthMin && (site.roadWidth ?? 0) < r.roadWidthMax
   ) ?? SETBACK_RULES[0]
 
   // We don't have actual setback measurements from canvas yet,
   // so we check if building footprint fits within plot with setbacks
-  const plotW   = site.plotWidth
-  const plotD   = site.plotDepth
+  const plotArea = site.plotArea ?? 0
+  const plotW   = Math.sqrt(plotArea)   // approximation
+  const plotD   = Math.sqrt(plotArea)   // approximation
   const maxBldW = plotW - rule.side * 2
   const maxBldD = plotD - rule.front - rule.rear
 
@@ -280,11 +281,11 @@ function checkSetbacks(
       id: 'setback-front',
       category: 'setback',
       title: 'Front Setback',
-      description: `Minimum front setback for road width ${site.roadWidth}m`,
+      description: `Minimum front setback for road width ${site.roadWidth ?? 0}m`,
       status: 'pass',
       actual: 'Measure from drawing',
       required: `≥ ${rule.front}m`,
-      remarks: `RAJUK/BNBC: Road ${site.roadWidth}m → Front setback ${rule.front}m`,
+      remarks: `RAJUK/BNBC: Road ${site.roadWidth ?? 0}m → Front setback ${rule.front}m`,
       bnbcRef: 'BNBC 2020, Part 3, Chapter 3.3',
       severity: 'critical',
     },
@@ -336,10 +337,10 @@ function checkFAR(
   const occupancy = bnbc?.occupancyType ?? 'A'
   const rule      = FAR_RULES[occupancy] ?? FAR_RULES['A']
 
-  const plotArea     = site.plotArea                             // m²
+  const plotArea     = site.plotArea ?? 0                        // m²
   const maxFloorArea = plotArea * rule.far                       // m²
   const actualFAR    = data.totalFloorArea > 0
-    ? data.totalFloorArea / plotArea
+    ? (plotArea > 0 ? data.totalFloorArea / plotArea : 0)
     : 0
 
   const farStatus: CheckStatus = actualFAR === 0 ? 'na'
@@ -377,7 +378,7 @@ function checkFAR(
 }
 
 function checkCoverage(site: SiteInfo, data: CanvasData): CheckResult[] {
-  const plotArea     = site.plotArea
+  const plotArea     = site.plotArea ?? 0
   const wallFootprint = data.wallLengthTotal * 0.25 / 1000       // rough m²
   const covPercent   = wallFootprint > 0 ? (wallFootprint / plotArea) * 100 : 0
 
@@ -401,7 +402,7 @@ function checkCoverage(site: SiteInfo, data: CanvasData): CheckResult[] {
 }
 
 function checkStairs(data: CanvasData, bld: BuildingInfo | null): CheckResult[] {
-  const floors   = bld?.totalFloors ?? 1
+  const floors   = bld?.numFloors ?? 1
   const isHigh   = floors > 6
   const minWidth = isHigh
     ? STAIR_RULES.minWidthHigh
@@ -464,7 +465,7 @@ function checkStairs(data: CanvasData, bld: BuildingInfo | null): CheckResult[] 
 }
 
 function checkFireEscape(data: CanvasData, bld: BuildingInfo | null): CheckResult[] {
-  const floors = bld?.totalFloors ?? 1
+  const floors = bld?.numFloors ?? 1
 
   return [
     {
@@ -687,8 +688,8 @@ function checkBuildingHeight(
   }
 
   // Height limit = road_width × 2 (RAJUK rule of thumb)
-  const maxHeight  = site.roadWidth * 2
-  const actualH    = bld.totalHeight ?? bld.totalFloors * (bld.floorHeight ?? 3)
+  const maxHeight  = (site.roadWidth ?? 0) * 2
+  const actualH    = bld.totalHeight ?? bld.numFloors * (bld.floorHeight ?? 3)
   const status: CheckStatus = actualH <= maxHeight ? 'pass'
     : actualH <= maxHeight * 1.1 ? 'warning'
     : 'fail'
@@ -701,8 +702,8 @@ function checkBuildingHeight(
       description: 'RAJUK: Max height = road width × 2',
       status,
       actual:      `${actualH}m`,
-      required:    `≤ ${maxHeight}m (road ${site.roadWidth}m × 2)`,
-      remarks:     `${bld.totalFloors} floors × ${bld.floorHeight ?? 3}m`,
+      required:    `≤ ${maxHeight}m (road ${site.roadWidth ?? 0}m × 2)`,
+      remarks:     `${bld.numFloors} floors × ${bld.floorHeight ?? 3}m`,
       bnbcRef:     'BNBC 2020, Part 3, Chapter 3.5 + RAJUK',
       severity:    'critical',
     },
@@ -721,7 +722,7 @@ function checkLiftRequirement(bld: BuildingInfo | null): CheckResult[] {
     }]
   }
 
-  const floors   = bld.totalFloors
+  const floors   = bld.numFloors
   const required = floors > LIFT_RULES.requiredFloors
 
   return [

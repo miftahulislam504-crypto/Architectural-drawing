@@ -1,22 +1,47 @@
+import { useEffect, useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import SplashPage from '@/pages/SplashPage'
+import { onAuthStateChanged } from 'firebase/auth'
+import { auth } from '@/lib/firebase'
+import LoginPage         from '@/pages/LoginPage'
 import ProjectSelectPage from '@/pages/ProjectSelectPage'
-import DrawingPage from '@/pages/DrawingPage'
+import DrawingPage       from '@/pages/DrawingPage'
+
+// Show nothing while Firebase checks auth state
+function AuthGate({ children }: { children: React.ReactNode }) {
+  const [ready,    setReady]    = useState(false)
+  const [loggedIn, setLoggedIn] = useState(false)
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      setLoggedIn(!!user)
+      setReady(true)
+    })
+    return () => unsub()
+  }, [])
+
+  if (!ready) return null   // brief flash prevention
+
+  return loggedIn
+    ? <>{children}</>
+    : <Navigate to="/login" replace />
+}
 
 export default function App() {
   return (
     <Routes>
-      {/* Splash / Landing */}
-      <Route path="/" element={<SplashPage />} />
+      {/* Public */}
+      <Route path="/login" element={<LoginPage />} />
 
-      {/* Project selection (from Hub) */}
-      <Route path="/projects" element={<ProjectSelectPage />} />
+      {/* Protected */}
+      <Route path="/projects" element={
+        <AuthGate><ProjectSelectPage /></AuthGate>
+      } />
+      <Route path="/draw/:projectId" element={
+        <AuthGate><DrawingPage /></AuthGate>
+      } />
 
-      {/* Main drawing workspace */}
-      <Route path="/draw/:projectId" element={<DrawingPage />} />
-
-      {/* Fallback */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      {/* Default → login */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )
 }

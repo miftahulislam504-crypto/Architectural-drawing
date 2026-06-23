@@ -130,7 +130,7 @@ export default function DrawingPage() {
 
         <div className="min-w-0 flex-1">
           <p className="text-text-primary text-xs font-display font-semibold leading-tight truncate">
-            {hubProject?.name ?? 'CivilOS Architectural'}
+            {hubProject?.projectName ?? 'CivilOS Architectural'}
           </p>
           <p className="text-text-muted text-2xs font-mono leading-tight">
             {activeFloor?.name ?? '—'}

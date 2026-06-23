@@ -149,7 +149,7 @@ export default function DrawingCanvas({
       <StatusBar
         x={cursor.xMm} y={cursor.yMm}
         zoom={zoom} tool={activeTool}
-        projectName={hubProject?.name ?? ''}
+        projectName={hubProject?.projectName ?? ''}
         onUndo={undo} onRedo={redo}
       />
     </div>

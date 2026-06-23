@@ -113,9 +113,9 @@ export const useAppStore = create<AppState & AppActions>()(
       setBNBCSettings: (settings) => set({ bnbcSettings: settings }),
       setBuildingInfo: (info) => {
         // Auto-generate floors based on building info
-        if (info.totalFloors > 0) {
+        if (info.numFloors > 0) {
           const floors: Floor[] = []
-          for (let i = 0; i < info.totalFloors; i++) {
+          for (let i = 0; i < info.numFloors; i++) {
             floors.push({
               id: i === 0 ? 'gf' : `${i}f`,
               name: i === 0 ? 'Ground Floor' : `${i}${getOrdinal(i)} Floor`,

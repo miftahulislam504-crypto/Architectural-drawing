@@ -26,7 +26,7 @@ export default function DrawingSetupPanel({ canvas }: DrawingSetupPanelProps) {
 
   const [data, setData] = useState<TitleBlockData>({
     ...DEFAULT_TITLE_BLOCK,
-    projectName:   hubProject?.name    ?? DEFAULT_TITLE_BLOCK.projectName,
+    projectName:   hubProject?.projectName ?? DEFAULT_TITLE_BLOCK.projectName,
     clientName:    hubProject?.clientName ?? DEFAULT_TITLE_BLOCK.clientName,
     drawingTitle:  activeFloor?.name   ?? 'Floor Plan',
     date:          new Date().toLocaleDateString('en-GB'),

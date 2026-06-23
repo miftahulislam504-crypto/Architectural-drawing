@@ -31,7 +31,7 @@ export default function ExportPanel({ canvas, projectId }: ExportPanelProps) {
 
   const [titleData] = useState<TitleBlockData>({
     ...DEFAULT_TITLE_BLOCK,
-    projectName:   hubProject?.name    ?? 'Project Name',
+    projectName:   hubProject?.projectName ?? 'Project Name',
     clientName:    hubProject?.clientName ?? 'Client Name',
     drawingTitle:  activeFloor?.name   ?? 'Floor Plan',
     drawingNumber: 'A-101',
@@ -52,7 +52,7 @@ export default function ExportPanel({ canvas, projectId }: ExportPanelProps) {
     try {
       await exportToPDF(
         canvas, options, titleData,
-        activeFloor?.name, hubProject?.name
+        activeFloor?.name, hubProject?.projectName
       )
       toast.success('PDF print dialog opened')
     } catch {
@@ -68,7 +68,7 @@ export default function ExportPanel({ canvas, projectId }: ExportPanelProps) {
     try {
       await exportToPNGDownload(
         canvas, options,
-        hubProject?.name ?? 'project',
+        hubProject?.projectName ?? 'project',
         activeFloor?.name ?? 'floor'
       )
       toast.success('PNG downloaded')
@@ -85,7 +85,7 @@ export default function ExportPanel({ canvas, projectId }: ExportPanelProps) {
     try {
       exportToSVG(
         canvas,
-        hubProject?.name ?? 'project',
+        hubProject?.projectName ?? 'project',
         activeFloor?.name ?? 'floor'
       )
       toast.success('SVG downloaded')
@@ -304,7 +304,7 @@ export default function ExportPanel({ canvas, projectId }: ExportPanelProps) {
         <div className="flex items-center justify-between mt-0.5">
           <span className="text-2xs text-text-muted">Project</span>
           <span className="text-2xs font-mono text-text-secondary truncate max-w-24">
-            {hubProject?.name ?? '—'}
+            {hubProject?.projectName ?? '—'}
           </span>
         </div>
       </div>

@@ -26,7 +26,7 @@ export default function ProjectInfoPanel() {
       {/* ── Project Header ─────────────────────── */}
       <div className="px-3 py-3 border-b border-panel-border">
         <p className="text-xs font-display font-semibold text-text-primary leading-tight truncate">
-          {hubProject.name}
+          {hubProject.projectName}
         </p>
         {hubProject.clientName && (
           <p className="text-2xs text-text-muted mt-0.5">
@@ -54,8 +54,6 @@ export default function ProjectInfoPanel() {
           {siteInfo ? (
             <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-2">
               <KV label="Plot Area"   value={`${siteInfo.plotArea} m²`} />
-              <KV label="Width"       value={`${siteInfo.plotWidth} m`} />
-              <KV label="Depth"       value={`${siteInfo.plotDepth} m`} />
               <KV label="Road Width"  value={`${siteInfo.roadWidth} m`} />
               <KV label="Soil Type"   value={siteInfo.soilType} accent />
               <KV label="District"    value={siteInfo.district ?? '—'} />
@@ -116,7 +114,7 @@ export default function ProjectInfoPanel() {
           {buildingInfo ? (
             <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 mt-2">
               <KV label="Type"          value={buildingInfo.buildingType} accent />
-              <KV label="Total Floors"  value={`${buildingInfo.totalFloors} F`} />
+              <KV label="Total Floors"  value={`${buildingInfo.numFloors} F`} />
               <KV label="Floor Height"  value={`${buildingInfo.floorHeight} m`} />
               <KV label="Total Height"  value={`${buildingInfo.totalHeight ?? '—'} m`} />
               <KV label="Basement"      value={`${buildingInfo.basementCount ?? 0} nos`} />
